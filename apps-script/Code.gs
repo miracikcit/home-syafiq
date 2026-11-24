@@ -3,7 +3,7 @@
  * Pengguna:
  *   - app Home Syafiq (PWA) dengan kod rahsia keluarga APP_CODE (dicipta sendiri dalam app kali pertama)
  *   - Mac mini (kunci ADMIN_KEY) untuk pindah data dan kemaskini
- * Tiada rahsia dalam kod ni. Kunci disimpan dalam Script Properties.
+ * Tiada rahsia atau ID Sheet dalam kod ni. Kunci disimpan dalam Script Properties.
  */
 const DATA_TAB = 'APP DATA';     // path | json | updated(ms) | deleted | oleh | sambungan json...
 const LOG_TAB = 'APP LOG';       // masa | siapa | path | tindakan
@@ -41,7 +41,7 @@ function doPost(e) {
 
 function app(b, admin) {
   switch (b.action) {
-    case 'check': return { ok: true, sheets: { SPENDING: SpreadsheetApp.getActive().getId(), BANK: bankId() } };
+    case 'check': return { ok: true, sheets: { SPENDING: SS().getId(), BANK: bankId() } };
     case 'pull': {
       const since = Number(b.since) || 0, docs = [];
       dataRows().forEach(r => { if (r.u > since) docs.push({ p: r.p, d: r.del ? null : JSON.parse(r.j || 'null'), u: r.u }); });
@@ -76,7 +76,7 @@ function app(b, admin) {
       return { ok: true, mime: f.getMimeType(), b64: Utilities.base64Encode(f.getBlob().getBytes()) };
     }
   }
-  if (admin && b.action === 'config') { if (b.bank) PropertiesService.getScriptProperties().setProperty('BANK_ID', String(b.bank)); return { ok: true, bank: bankId() }; }
+  if (admin && b.action === 'config') { if (b.spending) PropertiesService.getScriptProperties().setProperty('SPENDING_ID', String(b.spending)); if (b.bank) PropertiesService.getScriptProperties().setProperty('BANK_ID', String(b.bank)); return { ok: true, bank: bankId() }; }
   if (admin && b.action === 'ls') return { ok: true, docs: dataRows().map(r => ({ p: r.p, u: r.u, del: r.del, n: r.j.length })) };
   return { ok: false, error: 'tindakan tak dikenali' };
 }
@@ -125,9 +125,11 @@ function log(who, path, what) {
 function out(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }
 function withLock(fn) { const l = LockService.getScriptLock(); l.waitLock(25000); try { return fn(); } finally { l.releaseLock(); } }
 /* Hanya Sheet keluarga: SPENDING, Bank Statements 2026, dan Sheet yang dipaut dalam tetapan Cukai app. */
+/* Sheet SPENDING: projek terikat guna Sheet aktif; projek berasingan guna Script Property SPENDING_ID. */
+function SS() { return SpreadsheetApp.getActiveSpreadsheet() || SpreadsheetApp.openById(PropertiesService.getScriptProperties().getProperty('SPENDING_ID')); }
 function bankId() { return PropertiesService.getScriptProperties().getProperty('BANK_ID') || ''; }
 function openSs(id) {
-  const a = SpreadsheetApp.getActive();
+  const a = SS();
   if (!id || id === 'SPENDING' || id === a.getId()) return a;
   if (id === 'BANK') id = bankId();
   const ok = [bankId()];
@@ -139,7 +141,7 @@ function openSs(id) {
   return SpreadsheetApp.openById(id);
 }
 function sheet(name, header) {
-  const ss = SpreadsheetApp.getActive();
+  const ss = SS();
   let sh = ss.getSheetByName(name);
   if (!sh) { sh = ss.insertSheet(name); sh.getRange(1, 1, 1, header.length).setValues([header]); sh.hideSheet(); }
   return sh;
@@ -155,4 +157,4 @@ function trimValues(v) {
 }
 
 /** Jalankan sekali dari editor (butang Run) untuk beri kebenaran Sheet dan Drive. */
-function izinkan() { folder(); dataSheet(); sheet(LOG_TAB, ['masa', 'siapa', 'path', 'tindakan']); return 'OK'; }
+function izinkan() { folder(); return 'OK'; }   // kebenaran Google diminta untuk semua fungsi sekali gus
