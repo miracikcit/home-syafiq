@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Home Syafiq</title>
+<meta name="theme-color" content="#E8EDF6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0A0D14" media="(prefers-color-scheme: dark)">
+<meta name="referrer" content="no-referrer">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Home Syafiq">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="stylesheet" href="css/app.css?v=2026.11.24-1">
+</head>
+<body>
+<div class="app">
+  <div class="top"><div><p class="hand" id="hd-sub"></p><h1 id="hd-title"></h1></div><button class="btn ghost" id="editBtn" aria-pressed="false">Edit</button></div>
+  <p id="netpill" class="netpill glass" hidden></p>
+  <main id="app" class="view"></main>
+</div>
+<div id="toast" class="glass" role="status" hidden></div>
+<nav class="tabs glass" id="tabs" aria-label="Main menu"></nav>
+
+<script src="js/config.js?v=2026.11.24-1"></script>
+<script src="js/runtime.js?v=2026.11.24-1"></script>
+<script src="js/app.js?v=2026.11.24-1"></script>
+<script>
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').then(r => {
+  const bar = () => { if (document.querySelector('.updbar')) return; const b = document.createElement('button'); b.className = 'updbar btn'; b.textContent = 'Versi baru Home Syafiq. Tekan untuk muat semula';
+    b.onclick = () => { const w = r.waiting; if (w) w.postMessage({ t: 'skip' }); else location.reload(); }; document.body.appendChild(b); };
+  if (r.waiting && navigator.serviceWorker.controller) bar();
+  r.addEventListener('updatefound', () => { const n = r.installing; n && n.addEventListener('statechange', () => { if (n.state === 'installed' && navigator.serviceWorker.controller) bar(); }); });
+  let done = false; navigator.serviceWorker.addEventListener('controllerchange', () => { if (!done) { done = true; location.reload(); } });
+  setInterval(() => r.update().catch(() => {}), 30 * 60000);
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') r.update().catch(() => {}); });
+}).catch(() => {});
+</script>
+</body>
+</html>
