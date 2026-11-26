@@ -1,15 +1,15 @@
 :root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}
 /* Layout: one phone-width column of floating glass sheets over a soft wallpaper; a floating capsule tab bar at the bottom (same system as Planner Mira). */
 :root{
-  --bg:#E8EDF6; --w1:#F0DAD6; --w2:#E6DFE4; --w3:#DDD0FF; --w4:#C8F1DE; --solid:#F1EDF1;
-  --fg:#12161D; --mute:#525D6C;
-  --glass:rgba(255,255,255,.40); --glass2:rgba(255,255,255,.62); --edge:rgba(255,255,255,.80);
-  --hi:rgba(255,255,255,.95); --lo:rgba(255,255,255,.25); --hair:rgba(82,93,108,.14); --shadow:rgba(40,55,95,.16);
-  --accent:#D1C3B7; --on-accent:#2B211A; --ink:#7A6455; --warn:#A8380C; --warn-bg:rgba(255,140,90,.26);
+  --bg:#F7F3EF; --w1:#EFDCDD; --w2:#EADFD3; --w3:#E8DACD; --w4:#EDE2D6; --solid:#F3EDE7;
+  --fg:#2E2723; --mute:#6A5E56;
+  --glass:rgba(255,255,255,.46); --glass2:rgba(255,255,255,.66); --edge:rgba(255,255,255,.82);
+  --hi:rgba(255,255,255,.95); --lo:rgba(255,255,255,.25); --hair:rgba(46,39,35,.11); --shadow:rgba(110,90,78,.15);
+  --accent:#D6C4B6; --on-accent:#2B211A; --ink:#9A4F5D; --warn:#A8380C; --warn-bg:rgba(255,140,90,.26);
   --ok:#0B6B52; --ok-bg:rgba(70,200,160,.26);
   --c3:#A9DEC9; --cs:#A9C8F7; --cs-ink:#173A75; --cm:#CDB8F5; --cm-ink:#3F2A7A; --c4:#F6D49A; --c3-ink:#1E5A45; --c4-ink:#6B420C;
-  --display:"Instrument Serif",Georgia,serif; --hand:"Caveat","Bradley Hand",cursive;
-  --body:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",system-ui,sans-serif;
+  --display:"Jost",-apple-system,system-ui,sans-serif; --hand:"Caveat","Bradley Hand",cursive;
+  --body:"Jost",-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",system-ui,sans-serif;
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
   --bg:#0A0D14; --w1:#4A2418; --w2:#3A2A1A; --w3:#33205A; --w4:#0E3A30; --solid:#1B1C26;
@@ -43,8 +43,8 @@ body{
 }
 .app{max-width:680px; margin:0 auto; display:flex; flex-direction:column; gap:14px}
 .view{display:flex; flex-direction:column; gap:14px}
-h1{font-family:var(--display); font-style:italic; font-weight:400; font-size:32px; line-height:1; margin:0; letter-spacing:-.01em; text-wrap:balance}
-h2{font-family:var(--display); font-style:italic; font-weight:400; font-size:19px; line-height:1.1; margin:0; text-wrap:balance}
+h1{font-family:var(--display); font-weight:400; font-size:21px; line-height:1.15; margin:0; letter-spacing:.2em; text-transform:uppercase; text-wrap:balance}
+h2{font-family:var(--display); font-weight:500; font-size:11.5px; line-height:1.2; margin:0; letter-spacing:.18em; text-transform:uppercase; color:var(--ink); text-wrap:balance}
 .hand{font-family:var(--hand); font-size:17px; font-weight:700; color:var(--ink); margin:0; line-height:1.1}
 .top{display:flex; align-items:flex-end; justify-content:space-between; gap:10px; padding:6px 6px 0}
 .glass,.card{
@@ -301,3 +301,31 @@ a.mini,a.btn{display:inline-flex; align-items:center; text-decoration:none}
 .gate-in .btn[aria-pressed="false"]{background:var(--glass2)!important; color:var(--mute)!important; border:1px solid var(--edge)!important}
 .netpill{margin:0 6px; padding:6px 14px; border-radius:999px; font-size:12px; font-weight:600; color:var(--warn); background:var(--warn-bg); align-self:flex-start}
 .updbar{position:fixed; z-index:40; left:50%; transform:translateX(-50%); top:calc(10px + env(safe-area-inset-top, 0px)); max-width:calc(100% - 32px)}
+
+/* Home v2 (26 Nov 2026): bingkai kaca di kiri, kotak Together / tarikh penting / checklist di kanan */
+.fam{text-align:left}
+.famg{display:grid; grid-template-columns:1.12fr 1fr; gap:10px; align-items:stretch}
+.frames{display:grid; grid-template-columns:1fr 1fr; gap:6px; align-content:space-between}
+.cpl{grid-column:1/-1; display:grid; grid-template-columns:1fr 1fr; gap:6px; position:relative}
+.luv{position:absolute; left:50%; top:42%; width:44px; height:44px; transform:translate(-50%,-50%) rotate(-8deg); filter:drop-shadow(0 3px 5px rgba(154,79,93,.3)); z-index:1; pointer-events:none}
+.fr{position:relative; background:var(--glass2); border:1px solid var(--edge); border-radius:20px; padding:5px 5px 4px; box-shadow:inset 0 1.5px 0 var(--hi), 0 8px 18px var(--shadow); display:flex; flex-direction:column; align-items:center; gap:2px; min-width:0}
+.fr .ph{width:100%; aspect-ratio:1; border-radius:15px; display:grid; place-items:center; font-size:17px; font-weight:500; overflow:hidden}
+.fr .ph img{width:100%; height:100%; object-fit:cover; display:block}
+.fr.kid{margin:0 3px}
+.frn{font-size:9px; font-weight:500; letter-spacing:.16em; text-transform:uppercase}
+.age{font-family:var(--hand); font-size:12.5px; line-height:1.3; background:var(--solid); border:1.5px solid var(--fg); border-radius:99px; padding:0 7px; transform:rotate(-4deg); box-shadow:0 2px 5px var(--shadow); white-space:nowrap}
+.fr.kid:last-child .age{transform:rotate(4deg)}
+.hat{position:absolute; top:-19px; left:50%; width:32px; height:32px; transform:translateX(-25%) rotate(14deg); z-index:2; pointer-events:none}
+.conf{position:absolute; left:-10px; top:-16px; width:calc(100% + 20px); height:44px; pointer-events:none; z-index:1}
+.side{display:flex; flex-direction:column; gap:7px; min-width:0}
+.sbox{flex:1; background:var(--glass2); border:1px solid var(--edge); border-radius:17px; padding:7px 9px; box-shadow:inset 0 1.5px 0 var(--hi), 0 6px 14px var(--shadow); display:flex; flex-direction:column; justify-content:center; gap:1px; min-width:0}
+.sbox small{color:var(--mute); font-size:10.5px}
+.sbox b{font-size:19px; font-weight:500; font-variant-numeric:tabular-nums}
+.tog{font-family:var(--hand); font-size:19px; line-height:1; color:var(--ink); white-space:nowrap}
+.lab{font-size:9px; font-weight:500; letter-spacing:.16em; text-transform:uppercase; color:var(--mute)}
+.dt{font-family:var(--hand); font-size:13.5px; line-height:1.25; display:flex; gap:4px; white-space:nowrap; min-width:0}
+.dt>span:last-child{overflow:hidden; text-overflow:ellipsis}
+.sbox small{white-space:nowrap}
+.ckb{flex-direction:row; align-items:center; justify-content:space-between; gap:6px}
+.ckb .ckn{font-size:13px; display:block}
+.fam>.lk{margin-top:8px}

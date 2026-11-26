@@ -217,17 +217,17 @@ function impDates(){const o=[];
 const cdTxt=x=>x?(x.days===0?'Hari ni':x.days===1?'Esok':x.days+' hari'):'?';
 const drow=d=>`<div class="row"><span class="ic ${d.cls}">${d.ic}</span><span class="nm">${esc(d.n)}<small>${esc(d.sub)}</small></span><span class="cd ${d.x&&d.x.days<=1?'now':''}">${cdTxt(d.x)}</span></div>`;
 
-function famCard(){const M=S.family.meta||{},an=M.anniv,yrs=an?ageY(an):null,days=an?Math.round((T0()-new Date(an+'T00:00'))/864e5):null;
-  const ds=impDates(),nx=ds.find(d=>d.x),ck=((L('checklist')||{}).items||[]).filter(i=>!i.done).length;
-  return`<div class="card fam"><div class="head"><span class="hand">Keluarga kita</span><button class="sedit" data-person="profile">Butiran</button></div>
-   <div class="pair">${av('syafiq',78)}<span class="heart" aria-hidden="true">♥</span>${av('mira',78)}</div>
-   <div class="kids">${['maliq','musa'].map(k=>`<div class="kid">${av(k,56)}<span>${esc(pname(k))}</span></div>`).join('')}</div>
-   <h2 class="hai">Hai, ${esc(pname('syafiq'))} &amp; ${esc(pname('mira'))}</h2>
-   <p class="hand">${an?fYMD(ymd(an))+' bersama':'Tarikh kahwin belum diisi'}</p>
-   <p class="note" style="margin-top:4px">Tekan gambar untuk buka dashboard masing-masing.</p></div>
-   <div class="tiles"><div class="card tile"><b class="${days!=null&&days>9999?'sm':''}">${days!=null?days.toLocaleString('en-MY'):'?'}</b><small>hari bersama</small></div>
-    <div class="card tile"><b>${nx?(nx.x.days===0?'🎉':nx.x.days):'?'}</b><small>${nx?(nx.x.days===0?esc(nx.n)+' hari ni':'hari ke '+esc(nx.n.replace('Birthday ','b\'day '))):'tarikh seterusnya'}</small></div>
-    <div class="card tile"><b>${ck}</b><small>checklist belum siap</small></div></div>
+const LUV='<svg class="luv" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 41C10 31 5 23 7 15c2-7 11-9 17-1 6-8 15-6 17 1 2 8-3 16-17 26z" fill="#F4A9B8" stroke="#9A4F5D" stroke-width="2.4" stroke-linejoin="round"/><path d="M14 16c1-3 4-4 6-3" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg>';
+const HAT='<svg class="conf" viewBox="0 0 100 44" aria-hidden="true"><g stroke="#2E2723" stroke-width=".8"><rect x="6" y="20" width="6" height="4" fill="#F4A9B8" transform="rotate(20 9 22)"/><circle cx="20" cy="8" r="3" fill="#F7E8AE"/><rect x="30" y="26" width="5" height="5" fill="#A2C3F2" transform="rotate(-15 32 28)"/><path d="M80 8l3 5-6 1z" fill="#C8B2ED"/><circle cx="92" cy="24" r="3" fill="#F5C196"/><rect x="70" y="24" width="6" height="4" fill="#BFE6D3" transform="rotate(30 73 26)"/></g></svg><svg class="hat" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 6L8 35h24z" fill="#F7C6D0" stroke="#2E2723" stroke-width="2" stroke-linejoin="round"/><path d="M15 18l10 5M12 26l15 6" stroke="#A2C3F2" stroke-width="3" stroke-linecap="round"/><circle cx="20" cy="5" r="4" fill="#F7E8AE" stroke="#2E2723" stroke-width="2"/></svg>';
+function frame(id,kid){const p=FM(id),nm=pname(id),x=nextOcc(p.dob),a=ageY(p.dob),bd=!!(x&&x.days===0);
+  return`<button class="fr ${kid?'kid':''}" data-person="${id}" aria-label="Buka dashboard ${esc(nm)}">${bd?HAT:''}<span class="ph ${PC[id]}">${p.photo?`<img src="${esc(bUrl(p.photo))}" alt="">`:esc(nm.slice(0,2))}</span><span class="frn">${esc(nm)}</span>${kid&&a!=null?`<span class="age">${a} thn${x&&x.days>0&&x.days<=14?' · nak '+(a+1)+'!':''}</span>`:''}</button>`}
+function famCard(){const M=S.family.meta||{},an=M.anniv,o=an?ymd(an):null,days=an?Math.round((T0()-new Date(an+'T00:00'))/864e5):null;
+  const ds=impDates().filter(d=>d.x).slice(0,2),ck=((L('checklist')||{}).items||[]).filter(i=>!i.done).length;
+  return`<div class="card fam"><div class="famg"><div class="frames"><div class="cpl">${frame('syafiq')}${frame('mira')}${LUV}</div>${frame('maliq',1)}${frame('musa',1)}</div>
+   <div class="side"><div class="sbox"><span class="tog">♡ Together ♡</span><span><b>${days!=null?days.toLocaleString('en-MY'):'?'}</b> <small>hari</small></span>${o?`<small>${o.y} thn ${o.m} bln</small>`:''}</div>
+   <div class="sbox"><span class="lab">Tarikh penting</span>${ds.length?ds.map(d=>`<span class="dt"><span aria-hidden="true">${d.ic}</span><span>${esc(d.n.replace(' kahwin','').replace('Birthday ',''))} · ${d.x.days===0?'hari ni!':d.x.days===1?'esok!':d.x.days+' hari'}</span></span>`).join(''):'<small>Belum diisi</small>'}</div>
+   <div class="sbox ckb"><span><b class="ckn">Checklist</b><small>${ck} belum</small></span><button class="sedit" data-main="check">Buka</button></div></div></div>
+   <button class="lk" data-person="profile">Butiran keluarga</button></div>
 `}
 function datesCard(){return`<div class="card"><div class="head"><h2>Tarikh penting</h2><button class="sedit" data-person="profile">Edit</button></div>${impDates().map(drow).join('')}</div>`}
 
