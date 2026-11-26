@@ -329,3 +329,66 @@ a.mini,a.btn{display:inline-flex; align-items:center; text-decoration:none}
 .ckb{flex-direction:row; align-items:center; justify-content:space-between; gap:6px}
 .ckb .ckn{font-size:13px; display:block}
 .fam>.lk{margin-top:8px}
+
+/* Fasa 2-4 (26 Nov 2026): Wellness, period tracker, Mood Meter, Menu, Parenting, Trips */
+.cute{font-family:var(--hand); font-size:19px; line-height:1.05; font-weight:500}
+.cute.big{font-size:27px; display:block}
+.ctr{text-align:center; display:flex; flex-direction:column; align-items:center; gap:3px}
+.wsk{width:24px; height:24px; flex:none}
+.stkrow{display:flex; justify-content:space-around; align-items:center; margin:4px 0}
+.stkrow .wsk:nth-child(odd){transform:rotate(-10deg)} .stkrow .wsk:nth-child(even){transform:rotate(9deg)}
+.food{flex:none}
+.masc{display:grid; grid-template-columns:repeat(4,1fr); gap:4px; text-align:center; margin-bottom:8px}
+.mascb{position:relative; border:0; background:none; padding:0; display:flex; flex-direction:column; align-items:center; gap:1px}
+.mascb svg{width:42px; height:42px}
+.qb{position:absolute; right:0; top:-6px; transform:rotate(9deg); background:var(--solid); border:1.5px solid var(--fg); border-radius:99px; padding:0 6px; font-family:var(--hand); font-size:12.5px; line-height:1.35; box-shadow:0 2px 5px var(--shadow); white-space:nowrap}
+.qb b{font-size:15px; color:#C2534F}
+.qb.st{position:static; transform:none}
+.wcal7{display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:4px; position:relative; margin-bottom:4px}
+.wbox{position:relative; aspect-ratio:1/1.08; max-width:100%; background:var(--glass2); border:1px solid var(--edge); border-radius:12px; padding:4px; display:grid; grid-template-columns:repeat(4,1fr); grid-template-rows:repeat(4,1fr); gap:1.5px; box-shadow:inset 0 1px 0 var(--hi), 0 3px 8px var(--shadow)}
+.wbox.today{border-color:var(--fg)} .wbox.sel{box-shadow:0 0 0 2px var(--ink)}
+.wbox.wk{grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; gap:2px; padding:3px} .wbox.fut{opacity:.4}
+.bead{border-radius:38%; background:var(--hair)}
+.wn{position:absolute; inset:0; display:grid; place-items:center; font-family:var(--hand); font-size:22px; color:var(--fg); -webkit-text-stroke:3px var(--glass2); paint-order:stroke fill; pointer-events:none}
+.wleg{display:flex; flex-wrap:wrap; gap:3px 10px; font-size:10px; color:var(--mute); align-items:center; margin:4px 0}
+.wleg span{display:inline-flex; align-items:center; gap:3px} .wleg i{width:8px; height:8px; border-radius:50%; display:inline-block} .wleg svg{width:11px; height:11px}
+.wdet{border-top:1px solid var(--hair); padding-top:7px; margin:6px 0; display:flex; flex-direction:column; gap:3px; font-size:11.5px}
+.who3{display:grid; grid-template-columns:34px 52px 1fr; gap:6px; align-items:center} .who3 span:last-child{color:var(--mute)} .who3 b{font-weight:500}
+.wmini{display:grid; grid-template-columns:repeat(4,1fr); gap:1.5px; width:34px} .wmini .bead{aspect-ratio:1; display:block}
+.champ{display:flex; align-items:center; gap:9px; background:var(--glass2); border:1px solid var(--edge); border-radius:16px; padding:6px 9px; margin-bottom:8px}
+.champ>svg:first-child{width:52px; height:52px; flex:none} .champ>span{flex:1}
+.wscore{display:flex; flex-wrap:wrap; gap:4px 12px; font-size:11.5px} .wscore span{display:inline-flex; align-items:center; gap:4px} .wscore i{width:9px; height:9px; border-radius:50%}
+.wdc{display:flex; flex-direction:column; gap:2px} .wdc .wd{font-size:9px}
+.tk{border:0; border-radius:50%; background:var(--hair); padding:0; display:grid; place-items:center; color:var(--mute); width:100%; height:100%; aspect-ratio:1; place-self:center}
+.tk[aria-pressed="true"]{color:#2E2723; box-shadow:inset 0 1px 1px rgba(255,255,255,.8)} .tk svg{width:62%; height:62%} .tk:disabled{cursor:default}
+.wstar{position:absolute; right:-5px; top:-7px; z-index:1} .wstar .wsk{width:15px; height:15px}
+.rew{margin-top:8px; display:flex; flex-direction:column; gap:4px}
+.mood{position:relative; width:100%; margin-top:9px; text-align:left; display:flex; align-items:center; gap:8px; background:var(--glass2); border:1.5px dashed #D1A23A; border-radius:17px; padding:6px 11px}
+.mood .girl{width:48px; height:48px; flex:none} .mood .cute{display:block; font-size:17px}
+.db{position:absolute; right:-4px; top:-11px; transform:rotate(7deg); background:var(--solid); border:1.5px solid var(--fg); border-radius:99px; padding:0 7px 0 3px; font-family:var(--hand); font-size:12.5px; display:flex; align-items:center; gap:2px; box-shadow:0 3px 6px var(--shadow)} .db .wsk{width:17px; height:17px}
+.per{position:relative; overflow:visible}
+.stk{position:absolute; pointer-events:none; z-index:1} .stk .wsk{width:30px; height:30px}
+.stk.s1{right:-6px; top:-11px; transform:rotate(14deg)} .stk.s2{left:-8px; bottom:-9px; transform:rotate(-12deg)}
+.pnow{display:grid; grid-template-columns:84px 1fr; gap:10px; align-items:center; background:var(--glass2); border:1px solid var(--edge); border-radius:18px; padding:9px; margin-bottom:8px}
+.pnow .girl{width:84px; height:84px} .pnow h3{margin:0; font-size:22px} .pnow b.hi{color:#C2534F} .pnow b.lo{color:var(--ok)}
+.sym{display:flex; flex-wrap:wrap; gap:4px; margin:4px 0} .sym span{font-size:10px; background:var(--glass2); border:1px solid var(--hair); border-radius:99px; padding:1px 7px; transform:rotate(-1deg)} .sym span:nth-child(even){transform:rotate(1.5deg)}
+.pc{position:relative; aspect-ratio:1; max-width:100%; border-radius:13px; border:1.5px solid var(--edge); background:var(--glass2); font-size:13px; font-weight:500; color:#2E2723; display:grid; place-items:center; padding:0; box-shadow:inset 0 1px 0 var(--hi), 0 3px 8px var(--shadow)}
+.pc:not(.haid):not(.ramal):not(.subur):not(.ov):not(.lapar):not(.singa):not([style*="background"]){color:var(--fg)}
+.pc.haid{background:#F7B8C0} .pc.ramal{background:#FBE1E5; border:1.5px dashed #E58A99} .pc.subur{background:#CFE8D8} .pc.ov{background:#A9D8BC} .pc.lapar{background:#FBF2CC} .pc.singa{background:#FCE3CF}
+.pc.today{outline:2px solid var(--fg); outline-offset:1px} .pc:disabled{cursor:default}
+.pc .hrt{position:absolute; right:-4px; top:-5px; transform:rotate(10deg)} .pc .hrt .wsk{width:15px; height:15px} .pc .mk{position:absolute; left:2px; bottom:1px; font-size:8px}
+.baby{position:absolute; pointer-events:none; z-index:2; display:flex; flex-direction:column; align-items:center; transform:translate(-50%,-50%) rotate(-5deg)}
+.baby svg{width:76px; height:76px; filter:drop-shadow(0 4px 6px rgba(110,90,78,.3))}
+.baby b{font-family:var(--hand); font-size:18px; color:#C2534F; -webkit-text-stroke:3px #fff; paint-order:stroke fill; margin-top:-13px; letter-spacing:.05em; white-space:nowrap}
+.mc{flex-direction:column; display:flex; justify-content:center; align-items:center; gap:0; font-size:9.5px; line-height:1} .mc .wsk{width:58%; height:auto}
+.tot5{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:5px; text-align:center; margin:6px 0}
+.tot5 div{background:var(--glass2); border:1px solid var(--edge); border-radius:14px; padding:5px 2px; display:flex; flex-direction:column; align-items:center}
+.tot5 b{font-family:var(--hand); font-size:22px; line-height:1; font-weight:500} .tot5 span{font-size:8.5px; color:var(--mute); line-height:1.1}
+.mbtn{display:inline-flex; align-items:center; gap:4px} .mbtn .wsk{width:15px; height:15px}
+.mhero{border-radius:17px; padding:12px; display:flex; align-items:center; justify-content:space-between; gap:8px; background:linear-gradient(135deg,#F9D2B2,#F7E8AE); color:#2E2723}
+.mhero.dua{background:linear-gradient(135deg,#BFE6D3,#BCD5F7)} .mhero .lab{color:#2E2723}
+.pbody{display:block; white-space:pre-wrap; font-size:13px; line-height:1.5; margin-top:4px; color:var(--fg)}
+.prow{align-items:flex-start}
+.cover{height:78px; border-radius:16px; display:flex; align-items:flex-end; padding:9px 11px; font-size:11px; font-weight:500; letter-spacing:.2em; text-transform:uppercase; color:#2E2723}
+.lagi{display:grid; grid-template-columns:1fr 1fr; gap:12px} .lagi .card{text-align:left; display:flex; flex-direction:column; gap:3px} .lagi .wsk{width:30px; height:30px} .lagi b{font-weight:500; font-size:15px}
+.mhome .head{margin-bottom:0}
