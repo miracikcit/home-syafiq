@@ -133,7 +133,8 @@ function vHome(){const{y,m}=S.cal,first=new Date(y,m,1).getDay(),dim=new Date(y,
   let cells=DAYS.map(d=>`<div class="wd">${d.slice(0,3)}</div>`).join('')+'<div></div>'.repeat(first);
   for(let d=1;d<=dim;d++){const k=y+'-'+pad(m+1)+'-'+pad(d),ev=(by[k]||[]).sort((a,b)=>(a.time||'')<(b.time||'')?-1:1);
     cells+=`<button class="day ${k===TODAY?'today':''} ${k===S.sel?'sel':''}" data-day="${k}" aria-label="${d} ${MFULL[m]}${ev.length?', '+ev.length+' acara':''}"><span class="n">${d}</span>${ev.slice(0,2).map(e=>`<span class="ev ${e.tent?'tent':''}" style="--evc:${evCol(e.type||'lain')}">${esc(e.title)}</span>`).join('')}${ev.length>2?`<span class="more">+${ev.length-2}</span>`:''}</button>`}
-  let h=(S.evf?evForm():'')+famCard()+menuHomeCard()+(S.ready?upcomingCard()+checkAllCard():'')+taxAlert()+`<div class="card"><div class="head"><h2>${MFULL[m]} ${y}</h2><div style="display:flex;gap:8px"><button class="round" data-cal="-1" aria-label="Bulan sebelum">‹</button><button class="round" data-cal="1" aria-label="Bulan depan">›</button></div></div><div class="cal">${cells}</div>${calLegend()}</div>`;
+  if(wkid())return famCard();
+  let h=(S.evf?evForm():'')+famCard()+inboxCard()+menuHomeCard()+(S.ready?upcomingCard()+checkAllCard():'')+taxAlert()+`<div class="card"><div class="head"><h2>${MFULL[m]} ${y}</h2><div style="display:flex;gap:8px"><button class="round" data-cal="-1" aria-label="Bulan sebelum">‹</button><button class="round" data-cal="1" aria-label="Bulan depan">›</button></div></div><div class="cal">${cells}</div>${calLegend()}</div>`;
   const list=Object.entries(S.events).filter(([,e])=>S.sel?e.date===S.sel:e.date>=TODAY).sort((a,b)=>a[1].date===b[1].date?((a[1].time||'')<(b[1].time||'')?-1:1):a[1].date<b[1].date?-1:1);
   h+=`<div class="card"><div class="head"><h2>${S.sel?dLab(S.sel):'Semua plan akan datang'}</h2><div class="hr">${S.sel?`<button class="lk" data-day="">Tengok semua</button>`:''}<button class="sedit" data-evnew="">+ Plan</button></div></div>`+
    (!S.ready?`<p class="note">${esc(S.msg)}</p>`:list.length?list.map(([id,e])=>evRow(id,e)).join(''):`<p class="note">${S.sel?'Tiada plan pada hari ni.':'Belum ada plan akan datang.'}</p>`)+
@@ -316,6 +317,7 @@ function vProfile(){let h=`<button class="back" data-person="">‹ Home</button>
   return h+`<p class="note">Gambar dan salinan IC disimpan dalam app ni sahaja. Sesiapa yang kau share app ni boleh tengok.</p>`}
 function vPerson(){const id=S.person;if(id==='profile')return vProfile();const P=PPL.find(x=>x[0]===id);if(!P){S.person=null;return vHome()}
   const back=`<button class="back" data-person="">‹ Home</button>`+(S.evf?evForm():'');
+  if(wkid())return back+(S.ready?heroCard(id)+wellWeek(id):wait());
   if(!S.ready)return back+wait();
   if(P[2]==='adult')return back+vAdult(id)+wellWeek(id);
   return back+`<div class="menu glass">${KT.map(t=>`<button class="mi" data-ptab="${t[0]}" aria-pressed="${S.ptab===t[0]}">${t[1]}</button>`).join('')}</div>`+({ring:kRing,butiran:kBut,umur:kUmur,aktiviti:kAkt,info:kInfo}[S.ptab]||kRing)(id)+(S.ptab==='ring'?wellWeek(id):'')}
@@ -757,7 +759,7 @@ document.addEventListener('change',e=>{const t=e.target,k=t.dataset&&t.dataset.e
 const FP=[['s','Syafiq'],['m','Mira'],['b','Bersama']],PN={s:'Syafiq',m:'Mira'},WHO={s:'syafiq',m:'mira'};
 const FTP=[['overview','Ringkasan','Ringkasan'],['bill','Bill','Bill'],['commitment','Komitmen','Komitmen'],['debt','Hutang','Hutang & ansuran'],['reserve','Reserve','Reserve'],['cukai','Cukai','Cukai'],['breakdown','Breakdown','Breakdown'],['yearly','Yearly','Yearly']];
 const FTB=[['overview','Ringkasan','Ringkasan bersama'],['tanggung','Siapa tanggung','Siapa tanggung siapa'],['bill','Bill','Bill semua'],['breakdown','Breakdown','Breakdown'],['yearly','Yearly','Yearly']];
-const fTabs=()=>S.fp==='b'?FTB:FTP;
+const FTD=[['dash','Dashboard','Dashboard'],...FTP];const fTabs=()=>S.fp==='b'?FTB:FTD;
 const rId=w=>'r-'+WHO[w],dId=w=>'debt-'+WHO[w],aId=w=>'ans-'+WHO[w];
 const its=id=>((L(id)||{}).items||[]);
 const r2=v=>Math.round((+v||0)*100)/100;
@@ -1010,14 +1012,14 @@ document.addEventListener('change',e=>{const t=e.target,d=t.dataset||{};
 
 function render(force){const ae=document.activeElement;
   if(!force&&ae&&ae.tagName==='INPUT'&&ae.type!=='checkbox'&&$('#app').contains(ae)){dirty=true;return}dirty=false;
-  $('#tabs').innerHTML=MAIN.map(t=>`<button type="button" data-main="${t[0]}" ${(MAIN.some(x=>x[0]===S.main)?S.main:'lagi')===t[0]?'aria-current="page"':''}><svg viewBox="0 0 24 24" aria-hidden="true">${t[2]}</svg>${t[1]}</button>`).join('');
+  if(wkid()&&!['home','well'].includes(S.main))S.main='home';$('#tabs').innerHTML=(wkid()?MAIN.filter(t=>t[0]==='home'||t[0]==='well'):MAIN).map(t=>`<button type="button" data-main="${t[0]}" ${(MAIN.some(x=>x[0]===S.main)?S.main:'lagi')===t[0]?'aria-current="page"':''}><svg viewBox="0 0 24 24" aria-hidden="true">${t[2]}</svg>${t[1]}</button>`).join('');
   if(S.main==='finance'&&!fTabs().some(t=>t[0]===S.ft))S.ft='overview';if(S.fp!=='b')S.tw=S.fp;
-  const F=fTabs().find(t=>t[0]===S.ft)||fTabs()[0],T=S.main==='home'&&S.person?['Keluarga',S.person==='profile'?'Butiran keluarga':pname(S.person)]:{home:[DAYS[now.getDay()]+', '+now.getDate()+' '+MFULL[now.getMonth()],'Home Syafiq'],finance:['Finance · '+(S.fp==='b'?'Bersama':PN[S.fp]),F[2]],check:['Sama-sama settle','Checklist'],goals:['Simpan sama-sama','Goals'],well:['Sihat sama-sama','Wellness'],menu:['Apa masak hari ni?','Menu'],lagi:['Semua yang lain','Lagi'],parenting:['Doa dan tips','Parenting'],trips:['Bucket list keluarga','Trips']}[S.main]||['','Home Syafiq'];
+  const F=fTabs().find(t=>t[0]===S.ft)||fTabs()[0],T=S.main==='home'&&S.person?['Keluarga',S.person==='profile'?'Butiran keluarga':pname(S.person)]:{home:[DAYS[now.getDay()]+', '+now.getDate()+' '+MFULL[now.getMonth()],'Home Syafiq'],finance:['Finance · '+(S.fp==='b'?'Bersama':PN[S.fp]),F[2]],check:['Sama-sama settle','Checklist'],goals:['Simpan sama-sama','Goals'],well:['Sihat sama-sama','Wellness'],menu:['Apa masak hari ni?','Menu'],lagi:['Semua yang lain','Lagi'],tetapan:['Telegram, kod anak, Apple Pay','Bot & tetapan'],parenting:['Doa dan tips','Parenting'],trips:['Bucket list keluarga','Trips']}[S.main]||['','Home Syafiq'];
   $('#hd-sub').textContent=T[0];$('#hd-title').textContent=T[1];
-  const eb=$('#editBtn');eb.setAttribute('aria-pressed',S.edit);eb.textContent=S.edit?'Siap':'Edit';eb.hidden=['well','lagi'].includes(S.main)||(S.main==='finance'&&['overview','yearly','cukai','debt','tanggung'].includes(S.ft))||(S.main==='home'&&!!S.person);
+  const eb=$('#editBtn');eb.setAttribute('aria-pressed',S.edit);eb.textContent=S.edit?'Siap':'Edit';eb.hidden=wkid()||['well','lagi','tetapan'].includes(S.main)||(S.main==='finance'&&['overview','yearly','cukai','debt','tanggung'].includes(S.ft))||(S.main==='home'&&!!S.person);
   let h='';
-  if(S.main==='home')h=S.person?vPerson():vHome();else if(S.main==='check')h=vCheck();else if(S.main==='goals')h=vGoals();else if(S.main==='well')h=vWell();else if(S.main==='menu')h=vMenu();else if(S.main==='lagi')h=vLagi();else if(S.main==='parenting')h=vParenting();else if(S.main==='trips')h=vTrips();
-  else{const P=S.fp;h=finSwitch()+`<div class="menu glass">${fTabs().map(t=>`<button class="mi" data-ft="${t[0]}" aria-pressed="${S.ft===t[0]}">${t[1]}</button>`).join('')}</div>`+({overview:()=>P==='b'?vOverview():vPOver(P),tanggung:vTanggung,bill:vBill,breakdown:vBreak,commitment:()=>vCommitP(P),reserve:()=>vReserveP(P),debt:()=>vDebtP(P),cukai:vTax,yearly:vYearly}[S.ft]||vOverview)()}
+  if(S.main==='home')h=S.person?vPerson():vHome();else if(S.main==='check')h=vCheck();else if(S.main==='goals')h=vGoals();else if(S.main==='well')h=vWell();else if(S.main==='menu')h=vMenu();else if(S.main==='lagi')h=vLagi();else if(S.main==='parenting')h=vParenting();else if(S.main==='trips')h=vTrips();else if(S.main==='tetapan')h=vTetapan();
+  else if(finLocked(S.fp))h=finSwitch()+vFinLock(S.fp);else{const P=S.fp;h=finSwitch()+`<div class="menu glass">${fTabs().map(t=>`<button class="mi" data-ft="${t[0]}" aria-pressed="${S.ft===t[0]}">${t[1]}</button>`).join('')}</div>`+({dash:()=>vFinDash(P),overview:()=>P==='b'?vOverview():vPOver(P),tanggung:vTanggung,bill:vBill,breakdown:vBreak,commitment:()=>vCommitP(P),reserve:()=>vReserveP(P),debt:()=>vDebtP(P),cukai:vTax,yearly:vYearly}[S.ft]||vOverview)()}
   $('#app').innerHTML=h;const on=$('.menu [aria-pressed="true"]');if(on&&on.scrollIntoView)on.scrollIntoView({block:'nearest',inline:'center'})}
 
 /* Bills: one source, the BILL tab of the SPENDING sheet (shared with Planner Mira) */
@@ -1070,6 +1072,7 @@ function val(id){const e=document.getElementById(id);if(!e)return'';const v=e.va
 
 document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
   if(b.id==='editBtn'){S.edit=!S.edit;return render(true)}
+  if(wkid()&&d.person!==undefined&&d.person!==''&&d.person!==wme())return toast('Tab ni untuk '+(d.person==='profile'?'mak ayah':pname(d.person))+' sahaja.');
   if(moreClick(b,d))return;
   if(famClick(b,d))return;
   if(taxClick(b,d))return;

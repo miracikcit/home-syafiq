@@ -181,6 +181,7 @@
         <input class="txt" id="gCode" type="password" autocomplete="current-password" placeholder="Kod rahsia">
         <p class="lbl" style="margin-top:4px">Siapa guna phone ni?</p>
         <div class="two"><button class="btn ghost ps" data-gwho="Syafiq" aria-pressed="false">Syafiq</button><button class="btn ghost pm" data-gwho="Mira" aria-pressed="false">Mira</button></div>
+        <div class="two"><button class="btn ghost" data-gwho="Maliq" aria-pressed="false">Maliq</button><button class="btn ghost" data-gwho="Musa" aria-pressed="false">Musa</button></div>
         <button class="btn" id="gGo">Masuk</button></div>`;
       document.body.appendChild(box);
       ['click', 'change', 'input', 'keydown', 'focusout'].forEach(t => box.addEventListener(t, e => e.stopPropagation()));   // jangan sampai ke pengendali app
@@ -194,11 +195,14 @@
       const go = async () => {
         const v = document.getElementById('gCode').value.trim();
         if (!v) return msg('Taip kod rahsia dulu.');
-        if (!who) return msg('Pilih Syafiq atau Mira.');
+        if (!who) return msg('Pilih siapa guna.');
         CODE = v; WHO = who;
         try {
           if (fresh) await call('setup', { code: v }, { noAuth: true });
           const ck = await call('check', {}, { noAuth: true }); if (ck.sheets) lsSet('sheets', ck.sheets);
+          const kid = ck.role === 'kid', kidWho = who === 'Maliq' || who === 'Musa';
+          if (kid !== kidWho) { CODE = ''; return msg(kid ? 'Kod ni kod anak. Pilih Maliq atau Musa.' : 'Maliq dan Musa masuk guna kod anak.'); }
+          lsSet('role', kid ? 'kid' : 'family');
           lsSet('code', v); lsSet('who', who); box.remove(); tellSw(); resolve();
         } catch (e) { CODE = ''; msg(e.code === 'unavailable' ? 'Tiada internet. Cuba lagi.' : 'Kod salah. Cuba lagi.'); }
       };
@@ -215,6 +219,8 @@
     },
     lock() { lsSet('code', ''); location.reload(); },
     who: () => WHO,
+    role: () => lsGet('role', 'family'),
+    call: (action, body) => call(action, body),
     sheetId: k => (lsGet('sheets', {})[k]) || k
   };
 })();

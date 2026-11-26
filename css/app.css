@@ -392,3 +392,18 @@ a.mini,a.btn{display:inline-flex; align-items:center; text-decoration:none}
 .cover{height:78px; border-radius:16px; display:flex; align-items:flex-end; padding:9px 11px; font-size:11px; font-weight:500; letter-spacing:.2em; text-transform:uppercase; color:#2E2723}
 .lagi{display:grid; grid-template-columns:1fr 1fr; gap:12px} .lagi .card{text-align:left; display:flex; flex-direction:column; gap:3px} .lagi .wsk{width:30px; height:30px} .lagi b{font-weight:500; font-size:15px}
 .mhome .head{margin-bottom:0}
+
+/* Fasa 3 & 5 (26 Nov 2026): penunjuk token, tetapan, Finance dashboard */
+.tokd{flex:none; width:8px; height:8px; border-radius:50%; display:inline-block; box-shadow:0 0 0 2px var(--glass2)}
+.tokd.lo{background:#5FA37C} .tokd.mid{background:#D1A23A} .tokd.hi{background:#C2534F}
+b.lo{color:var(--ok)} b.hi{color:var(--warn)}
+.mono{font-family:ui-monospace,"SF Mono",Menlo,monospace; font-size:11px; word-break:break-all; background:var(--glass2); border:1px solid var(--edge); border-radius:10px; padding:6px 8px; margin:2px 0 6px; user-select:all; -webkit-user-select:all}
+ol.steps{margin:8px 0 0; padding-left:1.2rem; display:flex; flex-direction:column; gap:5px; font-size:12.5px}
+.lockc{align-items:center; text-align:center; display:flex; flex-direction:column; gap:10px; padding:26px 16px} .lockc .wsk{width:40px; height:40px} .lockc .txt{flex:none; width:min(240px,100%); text-align:center}
+.fhero{border-radius:17px; padding:13px; display:flex; flex-direction:column; gap:4px; background:linear-gradient(135deg,#BFE6D3,#DDEFE5); color:#2E2723}
+.fhero .lab{color:#2E2723} .fhero .bar{background:rgba(255,255,255,.6); margin-top:4px} .fhero .bar i{background:#2E2723}
+.fbig{font-size:30px; font-weight:500; line-height:1; font-variant-numeric:tabular-nums} .note2{font-size:11.5px}
+.fnum{font-weight:500; font-variant-numeric:tabular-nums; white-space:nowrap} .fnum.over{color:var(--warn)} .fnum small{color:var(--mute); font-weight:400}
+.fbud{margin-bottom:8px} .fbud .bar{margin-top:3px; height:7px}
+.fchart{width:100%; height:auto} .fchart text{font-family:var(--body); font-size:8px; fill:var(--mute)}
+.dowc{display:grid; grid-template-columns:repeat(7,1fr); gap:4px} .dowc div{border-radius:11px; padding:5px 0; text-align:center; font-size:9.5px; border:1px solid var(--edge)} .dowc b{display:block; font-weight:500; font-size:11.5px}
