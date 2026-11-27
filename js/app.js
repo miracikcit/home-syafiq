@@ -133,8 +133,8 @@ function vHome(){const{y,m}=S.cal,first=new Date(y,m,1).getDay(),dim=new Date(y,
   let cells=DAYS.map(d=>`<div class="wd">${d.slice(0,3)}</div>`).join('')+'<div></div>'.repeat(first);
   for(let d=1;d<=dim;d++){const k=y+'-'+pad(m+1)+'-'+pad(d),ev=(by[k]||[]).sort((a,b)=>(a.time||'')<(b.time||'')?-1:1);
     cells+=`<button class="day ${k===TODAY?'today':''} ${k===S.sel?'sel':''}" data-day="${k}" aria-label="${d} ${MFULL[m]}${ev.length?', '+ev.length+' acara':''}"><span class="n">${d}</span>${ev.slice(0,2).map(e=>`<span class="ev ${e.tent?'tent':''}" style="--evc:${evCol(e.type||'lain')}">${esc(e.title)}</span>`).join('')}${ev.length>2?`<span class="more">+${ev.length-2}</span>`:''}</button>`}
-  if(wkid())return famCard();
-  let h=(S.evf?evForm():'')+famCard()+inboxCard()+menuHomeCard()+(S.ready?upcomingCard()+checkAllCard():'')+taxAlert()+`<div class="card"><div class="head"><h2>${MFULL[m]} ${y}</h2><div style="display:flex;gap:8px"><button class="round" data-cal="-1" aria-label="Bulan sebelum">‹</button><button class="round" data-cal="1" aria-label="Bulan depan">›</button></div></div><div class="cal">${cells}</div>${calLegend()}</div>`;
+  if(wkid())return famCard()+kidToday(wme());
+  let h=(S.evf?evForm():'')+famCard()+dadAlert()+inboxCard()+menuHomeCard()+(S.ready?upcomingCard()+checkAllCard():'')+taxAlert()+`<div class="card"><div class="head"><h2>${MFULL[m]} ${y}</h2><div style="display:flex;gap:8px"><button class="round" data-cal="-1" aria-label="Bulan sebelum">‹</button><button class="round" data-cal="1" aria-label="Bulan depan">›</button></div></div><div class="cal">${cells}</div>${calLegend()}</div>`;
   const list=Object.entries(S.events).filter(([,e])=>S.sel?e.date===S.sel:e.date>=TODAY).sort((a,b)=>a[1].date===b[1].date?((a[1].time||'')<(b[1].time||'')?-1:1):a[1].date<b[1].date?-1:1);
   h+=`<div class="card"><div class="head"><h2>${S.sel?dLab(S.sel):'Semua plan akan datang'}</h2><div class="hr">${S.sel?`<button class="lk" data-day="">Tengok semua</button>`:''}<button class="sedit" data-evnew="">+ Plan</button></div></div>`+
    (!S.ready?`<p class="note">${esc(S.msg)}</p>`:list.length?list.map(([id,e])=>evRow(id,e)).join(''):`<p class="note">${S.sel?'Tiada plan pada hari ni.':'Belum ada plan akan datang.'}</p>`)+
@@ -160,7 +160,9 @@ function vGoals(){if(!S.ready)return wait();const gs=byOrder(S.goals);
 /* Keluarga: family header on Home, profile page, dashboards for each person. Data in db collection `family` (syafiq, mira, maliq, musa, meta). */
 const PPL=[['syafiq','Syafiq','adult'],['mira','Mira','adult'],['maliq','Maliq','kid'],['musa','Musa','kid']];
 const PC={syafiq:'ps',mira:'pm',maliq:'pk1',musa:'pk2'};
-const KT=[['ring','Ringkasan'],['butiran','Butiran'],['umur','Umur & Sekolah'],['aktiviti','Aktiviti'],['info','Info penting']];
+const PTH={syafiq:'syafiq',maliq:'maliq',musa:'musa'};   /* tema tab sendiri (27 Nov 2026): Mira dan Home kekal */
+const PPOW='<svg class="ppow" viewBox="0 0 100 80" aria-hidden="true"><path d="M50 2l9 18 20-10-6 21 24 4-20 13 14 18-23-4-4 22-14-17-15 15-2-22-23 2 15-17L5 30l22-3-5-21 18 11z" fill="#FFD23F" stroke="#1B1B1F" stroke-width="3" stroke-linejoin="round"/><text x="50" y="49" text-anchor="middle" font-family="Bangers,Impact,sans-serif" font-size="22" fill="#E8443A" stroke="#1B1B1F" stroke-width="1">POW!</text></svg>';
+const KT=[['ring','Ringkasan'],['sekolah','Jadual sekolah'],['wallet','Duit belanja'],['butiran','Butiran'],['umur','Umur & Sekolah'],['aktiviti','Aktiviti'],['info','Info penting']];
 const HARI=['Isnin','Selasa','Rabu','Khamis','Jumaat','Sabtu','Ahad'];
 /* Panduan umum ikut umur (umur yang dicapai dalam tahun tu). Boleh diubah dalam app. */
 const MST=[[0,'Lahir · mula jadual imunisasi bayi di klinik (ikut buku rekod kesihatan)'],[1,'Suntikan MMR dan dos susulan ikut jadual klinik'],[4,'Boleh mula tadika'],[5,'Prasekolah (umur 5 hingga 6)'],
@@ -238,6 +240,10 @@ function personForm(id){const p=FM(id),d=S.fe.d;
    <div class="form">${fl('Nama',fin('name',d.name,(PPL.find(x=>x[0]===id)||[])[1]))}${fl('Tarikh lahir',fin('dob',d.dob,'','date'))}</div>${acts()}`}
 function heroCard(id){const p=FM(id),nm=pname(id),a=ageY(p.dob),x=nextOcc(p.dob),k='p:'+id;
   if(isFe(k))return`<div class="card">${sh(esc(nm),k)}${personForm(id)}</div>`;
+  if(PTH[id]){const im=p.cut||p.photo,role={syafiq:'Apak',maliq:'Abang',musa:'Adik'}[id];
+    return`<div class="card phero2"><div class="ppor"><div class="pfr"></div>${im?`<img class="pcut ${p.cut?'':'nocut'}" src="${esc(bUrl(im))}" alt="${esc(nm)}">`:`<span class="pini">${esc(nm.slice(0,2))}</span>`}${id==='maliq'?PPOW:''}</div>
+     <div class="pside"><div class="ptop"><span class="ptag">${role}</span><button class="sedit" data-fe="${k}">Edit</button></div><h2 class="pnm">${esc(nm)}</h2>
+     <p class="psub">${p.dob?fmtD(p.dob)+(a!=null?' · '+a+' thn':''):'Tarikh lahir belum diisi'}${x?'<br>'+(x.days===0?'birthday hari ni! 🎉':x.days===1?'🎂 nak '+((a||0)+1)+' thn esok!':'birthday lagi '+x.days+' hari'):''}</p></div></div>`}
   return`<div class="card phero"><div style="display:flex;justify-content:flex-end"><button class="sedit" data-fe="${k}">Edit</button></div>${av(id,96,'span')}<h2>${esc(nm)}</h2>
    <p class="hand">${x?fYMD(ymd(p.dob))+'<br>'+(x.days===0?'birthday hari ni! 🎉':'birthday lagi '+x.days+' hari'):'Tarikh lahir belum diisi'}</p></div>`}
 
@@ -249,7 +255,7 @@ function ckCard(id){const its=((L('checklist')||{}).items||[]).map((it,i)=>[it,i
 function kidList(id){const nm=pname(id).toLowerCase();return sec('commitment').find(([,d])=>{const t=String(d.title||'').toLowerCase();return t.includes(nm)||t.includes(id)})}
 function kRing(id){const p=FM(id),nm=pname(id),cl=kidList(id),its=cl?(cl[1].items||[]):[],tot=sum(its.map(i=>i.a)),wk=p.wk||[],y=now.getFullYear(),by=p.dob?+p.dob.slice(0,4):null;
   const ms=p.ms||genMs(id),cur=ms.filter(m=>m.y===y),nxt=ms.filter(m=>m.y===y+1),lab=by?(schoolLabel(by,y)||'Umur '+(y-by)):'?';
-  let h=heroCard(id)+`<div class="tiles"><div class="card tile"><b>${n2(tot).split('.')[0]}</b><small>RM untuk ${esc(nm)} sebulan</small></div><div class="card tile"><b>${wk.length}</b><small>aktiviti seminggu</small></div><div class="card tile"><b class="${lab.length>7?'sm':''}">${esc(lab)}</b><small>tahun ${y}</small></div></div>`+personEvCard(id);
+  let h=heroCard(id)+kEsok(id,true)+`<div class="tiles"><div class="card tile"><b>${n2(tot).split('.')[0]}</b><small>RM untuk ${esc(nm)} sebulan</small></div><div class="card tile"><b>${wk.length}</b><small>aktiviti seminggu</small></div><div class="card tile"><b class="${lab.length>7?'sm':''}">${esc(lab)}</b><small>tahun ${y}</small></div></div>`+personEvCard(id);
   h+=`<div class="card"><div class="head"><h2>Komitmen ${esc(nm)}</h2><div class="hr"><span class="tot">${rm(tot)}</span><button class="sedit" data-goto="finance|commitment">Edit</button></div></div>`+
    (its.length?its.map(i=>`<div class="row"><span class="nm">${esc(i.n)}</span><span class="amt ${pc(i.w)}">${i.a==null?'—':rm(i.a)}</span></div>`).join('')+`<div class="leg"><span><i style="background:var(--cs)"></i>Syafiq bayar</span><span><i style="background:var(--cm)"></i>Mira bayar</span></div>`
    :`<p class="note">${cl?'Belum ada item dalam kad '+esc(cl[1].title)+'.':'Tiada kad komitmen untuk '+esc(nm)+' lagi.'}</p>`)+`</div>`;
@@ -317,10 +323,10 @@ function vProfile(){let h=`<button class="back" data-person="">‹ Home</button>
   return h+`<p class="note">Gambar dan salinan IC disimpan dalam app ni sahaja. Sesiapa yang kau share app ni boleh tengok.</p>`}
 function vPerson(){const id=S.person;if(id==='profile')return vProfile();const P=PPL.find(x=>x[0]===id);if(!P){S.person=null;return vHome()}
   const back=`<button class="back" data-person="">‹ Home</button>`+(S.evf?evForm():'');
-  if(wkid())return back+(S.ready?heroCard(id)+wellWeek(id):wait());
+  if(wkid())return back+(S.ready?heroCard(id)+(wme()===id?kidToday(id)+vKSek(id).replace(/<div class="card kbag">[\s\S]*$/,''):'')+wellWeek(id):wait());
   if(!S.ready)return back+wait();
   if(P[2]==='adult')return back+vAdult(id)+wellWeek(id);
-  return back+`<div class="menu glass">${KT.map(t=>`<button class="mi" data-ptab="${t[0]}" aria-pressed="${S.ptab===t[0]}">${t[1]}</button>`).join('')}</div>`+({ring:kRing,butiran:kBut,umur:kUmur,aktiviti:kAkt,info:kInfo}[S.ptab]||kRing)(id)+(S.ptab==='ring'?wellWeek(id):'')}
+  return back+`<div class="menu glass">${KT.map(t=>`<button class="mi" data-ptab="${t[0]}" aria-pressed="${S.ptab===t[0]}">${t[1]}</button>`).join('')}</div>`+({ring:kRing,sekolah:vKSek,wallet:vKWallet,butiran:kBut,umur:kUmur,aktiviti:kAkt,info:kInfo}[S.ptab]||kRing)(id)+(S.ptab==='ring'?wellWeek(id):'')}
 
 /* Uploads (gambar profil dan salinan IC) and downloads */
 const fileIn=document.createElement('input');fileIn.type='file';fileIn.hidden=true;document.body.appendChild(fileIn);
@@ -1020,7 +1026,8 @@ function render(force){const ae=document.activeElement;
   let h='';
   if(S.main==='home')h=S.person?vPerson():vHome();else if(S.main==='check')h=vCheck();else if(S.main==='goals')h=vGoals();else if(S.main==='well')h=vWell();else if(S.main==='menu')h=vMenu();else if(S.main==='lagi')h=vLagi();else if(S.main==='parenting')h=vParenting();else if(S.main==='trips')h=vTrips();else if(S.main==='tetapan')h=vTetapan();
   else if(finLocked(S.fp))h=finSwitch()+vFinLock(S.fp);else{const P=S.fp;h=finSwitch()+`<div class="menu glass">${fTabs().map(t=>`<button class="mi" data-ft="${t[0]}" aria-pressed="${S.ft===t[0]}">${t[1]}</button>`).join('')}</div>`+({dash:()=>vFinDash(P),overview:()=>P==='b'?vOverview():vPOver(P),tanggung:vTanggung,bill:vBill,breakdown:vBreak,commitment:()=>vCommitP(P),reserve:()=>vReserveP(P),debt:()=>vDebtP(P),cukai:vTax,yearly:vYearly}[S.ft]||vOverview)()}
-  $('#app').innerHTML=h;const on=$('.menu [aria-pressed="true"]');if(on&&on.scrollIntoView)on.scrollIntoView({block:'nearest',inline:'center'})}
+  const th=wkid()?PTH[wme()]||'':(S.main==='home'&&S.person&&PTH[S.person])||'';document.body.dataset.th=th;
+  $('#app').innerHTML=h;if(th){const t=$('#app .tiles'),sd=$('#app .phero2 .pside');if(t&&sd)sd.appendChild(t)}const on=$('.menu [aria-pressed="true"]');if(on&&on.scrollIntoView)on.scrollIntoView({block:'nearest',inline:'center'})}
 
 /* Bills: one source, the BILL tab of the SPENDING sheet (shared with Planner Mira) */
 const BILL_SHEET='SPENDING',BILL_RANGE='BILL!A1:Z200',GS='Google Sheets';

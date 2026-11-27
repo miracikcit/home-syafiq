@@ -223,6 +223,7 @@ function moreClick(b,d){const v=id=>{const e=document.getElementById(id);return 
   if(d.hlove){const[i,j]=d.hlove.split('|'),D=wdoc('trips',{items:[]}),hh=((D.items[+i]||{}).hotels||[])[+j];if(hh){hh.love=hh.love||[];const w=who()||'?',k=hh.love.indexOf(w);k>=0?hh.love.splice(k,1):hh.love.push(w);wsave('trips')}return R()}
   if(d.wdel){const[c,i,j]=d.wdel.split('|');if(c==='hotel'){const D=wdoc('trips',{items:[]});((D.items[+i]||{}).hotels||[]).splice(+j,1);wsave('trips')}else{const D=wdoc(c,{items:[]});(D.items||[]).splice(+i,1);wsave(c)}return R()}
   if(recipeClick(b,d,R,v))return true;
+  if(kidClick(b,d,R,v))return true;
   if(d.wsave&&!['trx','bud','acc'].includes(d.wsave)){const k=d.wsave,n=v('wf-n');if(!n){toast('Isi nama dulu.');return true}
     if(k==='plan'){const D=wdoc('menu',{plan:{},items:[]}),tm=new Date();if(v('wf-day')==='Esok')tm.setDate(tm.getDate()+1);D.plan=D.plan||{};D.plan[iso(tm)]={n,cook:v('wf-cook')};wsave('menu')}
     if(k==='recipe'){const D=wdoc('menu',{plan:{},items:[]});D.items=D.items||[];D.items.unshift({n,cat:v('wf-cat'),ing:v('wf-ing').split('\n').map(z=>z.trim()).filter(Boolean).slice(0,40).map(z=>({n:z,q:'',p:WFRESH.test(z)})),link:lk(v('wf-link')),note:v('wf-note'),by:who()});wsave('menu')}
@@ -434,3 +435,86 @@ function recipeClick(b,d,R,v){const D=()=>wdoc('menu',{plan:{},items:[]}),at=i=>
     W.form=null;sv();return R()}
   return false}
 document.addEventListener('input',e=>{if(e.target&&e.target.id==='rsearch'){W.rq=e.target.value.trim().toLowerCase();document.querySelectorAll('[data-rk]').forEach(el=>{el.hidden=!!W.rq&&!el.dataset.rk.includes(W.rq)})}});
+
+/* ================= Anak: wallet belanja sekolah, jadual sekolah, beg esok (27 Nov 2026) =================
+   Data dalam well/p-<anak> (tablet anak boleh baca dan tulis):
+   wal:{daily, days:[1..7 Isnin=1], top:[{d,a,by,n}], log:{YYYY-MM-DD:{s,at,by}}, cuti:{YYYY-MM:n}, seen:ms}
+   jw:{sk:{1:[{n,b}],..}, ag:{..}}   bawa:[{n,d}]   pack:{YYYY-MM-DD:[kunci]} */
+const KWD={maliq:6,musa:0};
+const kwP=id=>wdoc('p-'+id,{owe:0});
+const kwW=id=>{const P=kwP(id);P.wal=P.wal||{};const w=P.wal;if(w.daily==null)w.daily=KWD[id]||0;w.days=w.days||[1,2,3,4,5];w.top=w.top||[];w.log=w.log||{};w.cuti=w.cuti||{};return w};
+const kwIn=w=>w.top.reduce((s,t)=>s+(+t.a||0),0),kwOut=w=>Object.values(w.log).reduce((s,l)=>s+(+l.s||0),0),kwBal=w=>kwIn(w)-kwOut(w);
+const hIdx=d=>(d.getDay()+6)%7+1;
+function schDays(w,y,m){const dim=new Date(y,m+1,0).getDate();let n=0;for(let d=1;d<=dim;d++)if(w.days.includes(hIdx(new Date(y,m,d))))n++;return Math.max(0,n-(+w.cuti[y+'-'+pad(m+1)]||0))}
+const kwMon=(w,y,m)=>schDays(w,y,m)*(+w.daily||0);
+const KM=['Jan','Feb','Mac','Apr','Mei','Jun','Jul','Ogo','Sep','Okt','Nov','Dis'];
+function vKWallet(id){if(!S.ready)return wait();const w=kwW(id),nm=pname(id),b=kwBal(w),n=new Date(),y=n.getFullYear(),m=n.getMonth(),ny=m===11?y+1:y,nm2=(m+1)%12,
+   need=kwMon(w,y,m),need2=kwMon(w,ny,nm2),kid=wkid(),low=w.daily>0&&b<w.daily*3,f=W.form||{},
+   lg=Object.entries(w.log).sort((a,c)=>a[0]<c[0]?1:-1),ym=y+'-'+pad(m+1),usedM=lg.filter(([d])=>d.startsWith(ym)).reduce((s,[,l])=>s+(+l.s||0),0);
+  let h=`<div class="card kwal"><div class="head"><h2>Duit belanja ${esc(nm)}</h2>${kid?'':`<button class="sedit" data-wform="kwset|${id}">Tetapan</button>`}</div>
+   <div class="kwbig ${low?'low':''}"><small>Baki dalam tabung</small><b>${rm(b)}</b>${low?`<span class="kwwarn">Tinggal kurang dari 3 hari belanja</span>`:''}</div>
+   <div class="kwgrid"><div><b>${rm(w.daily)}</b><small>sehari</small></div><div><b>${schDays(w,y,m)}</b><small>hari sekolah ${KM[m]}</small></div><div><b>${rm(usedM)}</b><small>dibelanja ${KM[m]}</small></div></div>`;
+  if(f.t==='kwset'&&f.i===id)h+=`<div class="form">${wfl('Duit belanja sehari (RM)',wIn('wf-kwd','6',String(w.daily)))}${wfl('Hari cuti '+KM[m]+' (tolak dari kiraan)',wIn('wf-kwc','0',String(w.cuti[ym]||0)))}${wfl('Hari cuti '+KM[nm2]+' '+ny,wIn('wf-kwc2','0',String(w.cuti[ny+'-'+pad(nm2+1)]||0)))}<label class="fl full">Hari sekolah<span class="chips">${HARI.map((d,i)=>`<button class="pill" data-kwday="${id}|${i+1}" aria-pressed="${w.days.includes(i+1)}">${d.slice(0,3)}</button>`).join('')}</span></label></div>${wAct('kwset')}`;
+  if(!kid)h+=`<div class="kwneed"><span>Apak perlu masukkan<small>${schDays(w,y,m)} hari × ${rm(w.daily)} (${KM[m]}) · ${KM[nm2]}: ${rm(need2)}</small></span><b>${rm(need)}</b></div>`+
+   (f.t==='kwtop'&&f.i===id?`<div class="form">${wfl('Jumlah masuk (RM)',wIn('wf-kwa',String(need),String(Math.max(0,need-0))))}${wfl('Nota (pilihan)',wIn('wf-kwn','cth Duit belanja '+KM[m]))}</div>${wAct('kwtop')}`
+    :`<div class="racts"><button class="sedit on" data-wform="kwtop|${id}">+ Masukkan duit</button><button class="sedit" data-kwquick="${id}|${need}">Masuk ${rm(need)} (${KM[m]})</button></div>`);
+  h+=kwToday(id)+`<p class="dayh">Rekod</p>`+
+   ([...w.top.map((t,i)=>({d:t.d,a:+t.a,t:'in',n:t.n||'Apak masukkan',by:t.by,i})),...lg.map(([d,l])=>({d,a:-(+l.s||0),t:'out',n:'Belanja sekolah',by:l.by}))].sort((a,c)=>a.d<c.d?1:-1).slice(0,W.open['kwall'+id]?200:10)
+     .map(r=>`<div class="row kwr ${r.t}"><span class="nm">${esc(r.n)}<small>${dLab(r.d)}${r.by?' · '+esc(r.by):''}</small></span><span class="amt">${r.a>=0?'+':''}${rm(r.a)}</span>${!kid&&S.edit&&r.t==='in'?`<button class="del" data-kwdel="${id}|${r.i}" aria-label="Buang">×</button>`:''}</div>`).join('')||'<p class="note">Belum ada rekod.</p>')+
+   (w.top.length+lg.length>10?`<button class="lk" data-wopen="kwall${id}">${W.open['kwall'+id]?'Tunjuk 10 sahaja':'Tunjuk semua'}</button>`:'')+`</div>`;
+  return h}
+function kwToday(id){const w=kwW(id),l=w.log[TODAY],can=wkid()?wme()===id:true,school=w.days.includes(hIdx(new Date()));
+  if(l)return`<div class="kwtoday done"><span>Hari ni ${esc(pname(id))} belanja<small>${school?'':'hari tak sekolah · '}tekan Ubah kalau salah</small></span><b>${rm(l.s)}</b>${can?`<button class="sedit" data-kwundo="${id}">Ubah</button>`:''}</div>`;
+  if(!can)return`<div class="kwtoday"><span>Belum isi belanja hari ni</span></div>`;
+  return`<div class="kwtoday"><label class="fl" for="kw-s-${id}">Hari ni aku belanja berapa? (RM)</label><div class="add"><input class="txt" id="kw-s-${id}" type="number" inputmode="decimal" min="0" step="0.1" placeholder="${w.daily||''}"><button class="btn" data-kwlog="${id}">Simpan</button></div><button class="lk" data-kwzero="${id}">Hari ni tak belanja</button></div>`}
+function dadAlert(){if(wkid()||!S.ready)return'';const me=wme(),out=[];['maliq','musa'].forEach(id=>{const P=WL()['p-'+id];if(!P||!P.wal)return;const w=kwW(id),seen=(w.seen||{})[me]||0,nw=Object.entries(w.log).filter(([,l])=>(l.at||0)>seen),b=kwBal(w),low=w.daily>0&&b<w.daily*3;
+    if(nw.length||low)out.push(`<div class="row"><span class="nm">${esc(pname(id))}${nw.length?' belanja '+rm(nw.reduce((s,[,l])=>s+(+l.s||0),0))+(nw.length>1?' ('+nw.length+' hari)':nw[0][0]===TODAY?' hari ni':' · '+dLab(nw[0][0])):''}<small>baki ${rm(b)}${low?' · perlu tambah duit':''}</small></span><button class="sedit" data-person="${id}" data-kwgo="1">Tengok</button>${nw.length?`<button class="sedit" data-kwseen="${id}">Okay</button>`:''}</div>`)});
+  return out.length?`<div class="card kwalert"><div class="head"><h2>Duit belanja anak</h2></div>${out.join('')}</div>`:''}
+
+/* ---------- jadual sekolah ---------- */
+const KSCH=[['sk','Sekolah kebangsaan'],['ag','Sekolah agama']];
+const kjw=id=>{const P=kwP(id);P.jw=P.jw||{sk:{},ag:{}};return P.jw};
+const kjDay=(id,s,i)=>((kjw(id)[s]||{})[i]||[]);
+function vKSek(id){if(!S.ready)return wait();const jw=kjw(id),f=W.form||{},td=hIdx(new Date()),kid=wkid(),ed=f.t==='kjw'&&f.i===id,sel=W.ksch||'sk';
+  let h=`<div class="card"><div class="head"><h2>Jadual sekolah</h2>${kid?'':`<button class="sedit ${ed?'on':''}" data-wform="${ed?'':'kjw|'+id}" ${ed?'data-wcancel="1"':''}>${ed?'Batal':'Edit'}</button>`}</div>
+   <div class="chips">${KSCH.map(([k,n])=>`<button class="pill" data-ksch="${k}" aria-pressed="${sel===k}">${n}</button>`).join('')}</div>`;
+  if(ed){h+=`<p class="note">Satu baris satu subjek ikut susunan. Tulis barang tambahan selepas tanda |, contoh <b>Pendidikan Jasmani | baju sukan, kasut</b>. Setiap subjek dikira sebagai buku subjek tu.</p><div class="form">`+
+     HARI.map((d,i)=>`<label class="fl full">${d}<textarea class="txt" id="kj-${i+1}" rows="${i<5?4:2}" maxlength="800" placeholder="${i<5?'Bahasa Melayu\nMatematik\nSains | buku latihan':'kosong kalau tiada sekolah'}">${esc(kjDay(id,sel,i+1).map(r=>r.n+(r.b?' | '+r.b:'')).join('\n'))}</textarea></label>`).join('')+`</div>${wAct('kjw')}</div>`;return h}
+  const any=HARI.some((d,i)=>kjDay(id,sel,i+1).length);
+  if(!any)return h+`<p class="note">${kid?'Jadual belum diisi. Minta Bonda atau Apak isi.':'Belum ada jadual. Tekan Edit dan taip subjek setiap hari.'}</p></div>`;
+  h+=`<div class="kjgrid">`+HARI.map((d,i)=>{const r=kjDay(id,sel,i+1);if(!r.length)return'';return`<div class="kjday ${td===i+1?'today':''}"><b>${d}${td===i+1?' · hari ni':''}</b>${r.map(x=>`<span>${esc(x.n)}${x.b?`<small>+ ${esc(x.b)}</small>`:''}</span>`).join('')}</div>`}).join('')+`</div></div>`;
+  return h+kEsok(id,true)}
+
+/* ---------- beg esok: buku ikut jadual + peringatan + aktiviti sekolah dari Telegram ---------- */
+function kNext(id){const d=new Date();d.setHours(0,0,0,0);for(let k=1;k<=7;k++){d.setDate(d.getDate()+1);const i=hIdx(d);if(kjDay(id,'sk',i).length||kjDay(id,'ag',i).length)return[new Date(d),i]}const t=new Date();t.setDate(t.getDate()+1);return[t,hIdx(t)]}
+function kEsok(id,compact){if(!S.ready)return'';const P=kwP(id),[dt,i]=kNext(id),key=iso(dt),sk=kjDay(id,'sk',i),ag=kjDay(id,'ag',i),pk=(P.pack||{})[key]||[],can=wkid()?wme()===id:true,
+   rem=(P.bawa||[]).map((r,j)=>[r,j]).filter(([r])=>!r.d||r.d===key),
+   evs=Object.entries(S.events||{}).filter(([,e])=>e.date>=TODAY&&e.date<=iso(new Date(dt.getTime()+6*864e5))&&whoOf(e).includes(id)).sort((a,c)=>a[1].date<c[1].date?-1:1),
+   items=[...sk.map(r=>['sk:'+r.n,'Buku '+r.n,r.b]),...ag.map(r=>['ag:'+r.n,'Buku '+r.n+' (agama)',r.b]),...rem.map(([r,j])=>['r:'+r.n,r.n,'',j]),...evs.filter(([,e])=>e.date===key&&e.note).map(([eid,e])=>['e:'+eid,e.title,e.note])],
+   dn=items.filter(x=>pk.includes(x[0])).length,lab=key===iso(new Date(Date.now()+864e5))?'esok':DAYS[dt.getDay()]+' '+dt.getDate()+' '+KM[dt.getMonth()],f=W.form||{};
+  if(compact&&!items.length&&!evs.length)return'';
+  let h=`<div class="card kbag"><div class="head"><h2>Beg ${esc(lab)}</h2><span class="tot">${dn} / ${items.length}</span></div>`+
+   (items.length?items.map(([k,n,b,j])=>`<label class="row kbr ${pk.includes(k)?'paid':''}"><input type="checkbox" data-kpack="${id}|${key}|${esc(k)}" ${pk.includes(k)?'checked':''} ${can?'':'disabled'}><span class="nm">${esc(n)}${b?`<small>${esc(b)}</small>`:''}</span>${j!=null&&!wkid()&&S.edit?`<button class="del" data-kbdel="${id}|${j}" aria-label="Buang">×</button>`:''}</label>`).join('')
+    :`<p class="note">Tiada buku untuk ${esc(lab)}. ${wkid()?'':'Isi jadual dalam tab Jadual sekolah.'}</p>`)+
+   (items.length&&dn===items.length?`<p class="cute ctr">Beg dah siap! ✓</p>`:'');
+  if(!wkid())h+=f.t==='kbawa'&&f.i===id?`<div class="form">${wfl('Perlu bawa',wIn('wf-n','cth Duit yuran RM5, botol air'))}${wfl('Untuk',wSel('wf-kbd',['Hari '+lab,'Setiap hari'],'Hari '+lab))}</div>${wAct('kbawa')}`:`<button class="lk" data-wform="kbawa|${id}">+ Peringatan bawa barang</button>`;
+  if(evs.length)h+=`<p class="dayh">Aktiviti sekolah</p>`+evs.map(([eid,e])=>`<div class="row"><span class="nm">${esc(e.title)}${e.tent?' <small class="qtag">dari Telegram</small>':''}<small>${dLab(e.date)}${e.time?' · '+fmtT(e.time):''}${e.note?' · '+esc(e.note):''}</small></span></div>`).join('');
+  return h+`</div>`}
+function kidToday(id){if(!S.ready||!['maliq','musa'].includes(id))return'';return kEsok(id)+(kwW(id).daily>0||kwW(id).top.length?vKWallet(id):'')}
+function kidClick(b,d,R,v){const num=s=>{const n=parseFloat(String(s).replace(/[^0-9.]/g,''));return isFinite(n)?n:null},me=(window.HS&&HS.who&&HS.who())||'';
+  if(d.kwgo){S.main='home';S.person=d.person;S.ptab='wallet';S.edit=false;S.fe=null;S.evf=null;window.scrollTo(0,0);return R()}
+  if(d.ksch){W.ksch=d.ksch;W.form=null;return R()}
+  if(d.kwday){const[id,i]=d.kwday.split('|'),w=kwW(id),k=+i,j=w.days.indexOf(k);j>=0?w.days.splice(j,1):w.days.push(k);w.days.sort();wsave('p-'+id);return R()}
+  if(d.kwquick){const[id,a]=d.kwquick.split('|');if(!(+a>0)){toast('Jumlah RM 0. Semak tetapan.');return true}kwW(id).top.push({d:TODAY,a:+a,by:me,n:'Duit belanja '+KM[new Date().getMonth()]});wsave('p-'+id);toast('Masuk '+rm(+a)+' ke tabung '+pname(id)+'.');return R()}
+  if(d.kwlog||d.kwzero){const id=d.kwlog||d.kwzero,s=d.kwzero?0:num(v('kw-s-'+id));if(s==null){toast('Isi jumlah dulu.');return true}kwW(id).log[TODAY]={s,at:Date.now(),by:me};wsave('p-'+id);toast(s?'Direkod. Apak boleh nampak.':'Okay, tak belanja hari ni.');return R()}
+  if(d.kwundo){delete kwW(d.kwundo).log[TODAY];wsave('p-'+d.kwundo);return R()}
+  if(d.kwseen){const w=kwW(d.kwseen);w.seen=w.seen||{};w.seen[wme()]=Date.now();wsave('p-'+d.kwseen);return R()}
+  if(d.kwdel){const[id,i]=d.kwdel.split('|');kwW(id).top.splice(+i,1);wsave('p-'+id);return R()}
+  if(d.kbdel){const[id,j]=d.kbdel.split('|'),P=kwP(id);(P.bawa||[]).splice(+j,1);wsave('p-'+id);return R()}
+  if(d.wsave==='kwset'){const id=W.form.i,w=kwW(id),n=new Date(),y=n.getFullYear(),m=n.getMonth(),ny=m===11?y+1:y,m2=(m+1)%12;w.daily=num(v('wf-kwd'))||0;w.cuti[y+'-'+pad(m+1)]=num(v('wf-kwc'))||0;w.cuti[ny+'-'+pad(m2+1)]=num(v('wf-kwc2'))||0;wsave('p-'+id);W.form=null;return R()}
+  if(d.wsave==='kwtop'){const id=W.form.i,a=num(v('wf-kwa'));if(!(a>0)){toast('Isi jumlah dulu.');return true}kwW(id).top.push({d:TODAY,a,by:me,n:v('wf-kwn')||'Apak masukkan'});wsave('p-'+id);W.form=null;toast('Masuk '+rm(a)+'.');return R()}
+  if(d.wsave==='kjw'){const id=W.form.i,jw=kjw(id),s=W.ksch||'sk';jw[s]={};HARI.forEach((x,i)=>{const r=v('kj-'+(i+1)).split('\n').map(z=>z.trim()).filter(Boolean).slice(0,15).map(z=>{const[n,...b]=z.split('|');return{n:n.trim().slice(0,40),b:b.join('|').trim().slice(0,80)}}).filter(r=>r.n);if(r.length)jw[s][i+1]=r});wsave('p-'+id);W.form=null;toast('Jadual disimpan.');return R()}
+  if(d.wsave==='kbawa'){const id=W.form.i,n=v('wf-n');if(!n){toast('Isi barang dulu.');return true}const P=kwP(id),[dt]=kNext(id);P.bawa=P.bawa||[];P.bawa.push({n:n.slice(0,80),d:/^Setiap/.test(v('wf-kbd'))?'':iso(dt)});wsave('p-'+id);W.form=null;return R()}
+  return false}
+document.addEventListener('change',e=>{const t=e.target,k=t&&t.dataset&&t.dataset.kpack;if(!k)return;const[id,key,...r]=k.split('|'),kk=r.join('|'),P=kwP(id);P.pack=P.pack||{};
+  Object.keys(P.pack).forEach(x=>{if(x<TODAY)delete P.pack[x]});const a=P.pack[key]=P.pack[key]||[],j=a.indexOf(kk);t.checked?(j<0&&a.push(kk)):(j>=0&&a.splice(j,1));wsave('p-'+id);render(true)});

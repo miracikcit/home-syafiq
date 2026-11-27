@@ -445,3 +445,79 @@ textarea.txt{height:auto; border-radius:16px; padding:10px 14px; line-height:1.4
 .tokleg{display:flex; flex-wrap:wrap; align-items:center; gap:5px; margin-top:6px}
 .sedit .tokd{margin-left:3px; vertical-align:middle}
 .card .head:has([data-rpaste]) h2{margin-right:auto}
+
+/* ================= Anak: wallet, jadual, beg esok (27 Nov 2026) ================= */
+.kwbig{display:flex; flex-direction:column; align-items:center; padding:8px 0 4px} .kwbig small{color:var(--mute); font-size:11px; letter-spacing:.14em; text-transform:uppercase}
+.kwbig b{font-family:var(--display); font-weight:400; font-size:36px; line-height:1.1; font-variant-numeric:tabular-nums}
+.kwbig.low b{color:var(--warn)} .kwwarn{font-size:11.5px; font-weight:700; color:var(--warn); background:var(--warn-bg); border-radius:99px; padding:2px 10px; margin-top:4px}
+.kwgrid{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; margin:6px 0; text-align:center}
+.kwgrid div{background:var(--glass2); border:1px solid var(--edge); border-radius:14px; padding:6px 4px; display:flex; flex-direction:column}
+.kwgrid b{font-size:15px; font-variant-numeric:tabular-nums} .kwgrid small{font-size:10.5px; color:var(--mute)}
+.kwneed{display:flex; justify-content:space-between; align-items:center; gap:10px; padding:9px 12px; border-radius:16px; background:var(--ok-bg); margin:6px 0}
+.kwneed small{display:block; font-size:11px; color:var(--mute)} .kwneed b{font-size:18px; font-variant-numeric:tabular-nums}
+.kwtoday{display:grid; gap:6px; padding:10px 12px; border-radius:16px; border:1.5px dashed var(--edge); background:var(--glass2); margin:8px 0}
+.kwtoday.done{display:flex; align-items:center; gap:10px; border-style:solid} .kwtoday.done span{flex:1} .kwtoday small{display:block; font-size:11px; color:var(--mute)} .kwtoday b{font-size:18px; font-variant-numeric:tabular-nums}
+.kwr.in .amt{color:var(--ok)} .kwr.out .amt{color:var(--warn)}
+.kjgrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:8px; margin-top:8px}
+.kjday{display:flex; flex-direction:column; gap:3px; background:var(--glass2); border:1px solid var(--edge); border-radius:16px; padding:8px 10px; min-width:0}
+.kjday b{font-size:11px; letter-spacing:.12em; text-transform:uppercase; margin-bottom:2px} .kjday.today{outline:2px solid var(--ink)}
+.kjday span{font-size:12.5px; line-height:1.3} .kjday small{display:block; font-size:10.5px; color:var(--mute)}
+.kbr{cursor:pointer} .kbr input{width:20px; height:20px; flex:none; accent-color:var(--ink)} .kbr .nm small{display:block; font-size:11px; color:var(--mute)} .kbr.paid .nm{text-decoration:line-through; opacity:.6}
+
+/* ================= Hero tab sendiri: gambar cutout besar di kiri, maklumat di kanan ================= */
+.phero2{display:grid; grid-template-columns:46% minmax(0,1fr); gap:12px; align-items:end; padding:12px}
+.ppor{position:relative; aspect-ratio:.8; max-width:100%}
+.pfr{position:absolute; left:0; right:0; bottom:0; height:66%; border-radius:22px}
+.pcut{position:absolute; left:0; bottom:0; width:100%; height:100%; object-fit:cover; object-position:50% 100%; filter:drop-shadow(0 6px 10px rgba(0,0,0,.25))}
+.pcut.nocut{height:66%; border-radius:22px; filter:none}
+.pini{position:absolute; left:0; right:0; bottom:0; height:66%; display:grid; place-items:center; font-size:34px}
+.ppow{position:absolute; right:-8px; top:4px; width:74px; transform:rotate(10deg)}
+.pside{display:flex; flex-direction:column; gap:6px; min-width:0}
+.ptop{display:flex; justify-content:space-between; align-items:center; gap:6px}
+.ptag{font-size:10px; letter-spacing:.22em; text-transform:uppercase; font-weight:600}
+.pnm{font-size:26px; margin:0; line-height:1; letter-spacing:.16em}
+.psub{margin:0; font-size:12px; line-height:1.4; color:var(--mute)}
+.pside .tiles{grid-template-columns:1fr; gap:6px}
+.pside .tile{text-align:left; padding:7px 10px; border-radius:14px; box-shadow:none; -webkit-backdrop-filter:none; backdrop-filter:none}
+.pside .tile b{font-size:19px} .pside .tile small{font-size:10.5px}
+
+/* ---------- Syafiq: hitam, kemas, profesional (gaya Studio) ---------- */
+body[data-th="syafiq"]{--bg:#0E0F11; --w1:#16202E; --w2:#121417; --w3:#141821; --w4:#101215; --solid:#16181B; --fg:#F3F1EE; --mute:#9A968F;
+  --glass:#16181B; --glass2:#1D2024; --edge:#26282C; --hi:rgba(255,255,255,.04); --lo:rgba(0,0,0,0); --hair:#26282C; --shadow:rgba(0,0,0,.5);
+  --accent:#8FB3EE; --on-accent:#0E0F11; --ink:#8FB3EE; --ok:#8FD7B8; --ok-bg:rgba(143,215,184,.12); --warn:#F2A07B; --warn-bg:rgba(242,160,123,.14); color-scheme:dark}
+body[data-th="syafiq"] .pfr{background:linear-gradient(160deg,#25344A,#16181B); border:1px solid #2E3A4C}
+body[data-th="syafiq"] .pnm{font-weight:300; letter-spacing:.2em; color:var(--fg)}
+body[data-th="syafiq"] .ptag{color:var(--ink)}
+body[data-th="syafiq"] .card{-webkit-backdrop-filter:none; backdrop-filter:none; border-radius:18px}
+body[data-th="syafiq"] h2{color:var(--fg)}
+
+/* ---------- Maliq: komik superhero ---------- */
+body[data-th="maliq"]{--bg:#FFF6D6; --w1:#FFEFB0; --w2:#DCE8FF; --w3:#FFE0DA; --w4:#FFF1C4; --solid:#FFF6D6; --fg:#1B1B1F; --mute:#4B4B55;
+  --glass:#fff; --glass2:#fff; --edge:#1B1B1F; --hi:transparent; --lo:transparent; --hair:rgba(27,27,31,.15); --shadow:transparent;
+  --accent:#E8443A; --on-accent:#fff; --ink:#2F6BD8; --ok:#1E8A4C; --ok-bg:#D9F5DF; --warn:#C0362C; --warn-bg:#FFE0DA;
+  background:radial-gradient(circle,rgba(47,107,216,.16) 1.2px,transparent 1.6px) 0 0/10px 10px,#FFF6D6!important}
+body[data-th="maliq"] #app .card{border:2.5px solid #1B1B1F; box-shadow:4px 4px 0 #1B1B1F; border-radius:16px; -webkit-backdrop-filter:none; backdrop-filter:none}
+body[data-th="maliq"] #app h2{font-family:"Bangers",Impact,sans-serif; font-weight:400; font-size:20px; letter-spacing:.06em; text-transform:uppercase; color:#2F6BD8}
+body[data-th="maliq"] .pnm{font-family:"Bangers",Impact,sans-serif!important; font-size:44px!important; letter-spacing:.04em!important; color:#E8443A!important; -webkit-text-stroke:1.5px #1B1B1F; text-shadow:3px 3px 0 #1B1B1F}
+body[data-th="maliq"] .pfr{background:#2F6BD8 radial-gradient(circle,rgba(255,255,255,.22) 1.5px,transparent 2px) 0 0/9px 9px; border:3px solid #1B1B1F; box-shadow:4px 4px 0 #1B1B1F}
+body[data-th="maliq"] .pside .tile{border:2.5px solid #1B1B1F!important; box-shadow:3px 3px 0 #1B1B1F!important}
+body[data-th="maliq"] .pside .tile:nth-child(1){background:#FFD23F} body[data-th="maliq"] .pside .tile:nth-child(3){background:#E8443A; color:#fff} body[data-th="maliq"] .pside .tile:nth-child(3) small{color:#fff}
+body[data-th="maliq"] .pside .tile b{font-family:"Bangers",Impact,sans-serif; font-weight:400; letter-spacing:.04em; font-size:24px}
+body[data-th="maliq"] .menu .mi{border:2px solid #1B1B1F; background:#fff; margin-right:4px} body[data-th="maliq"] .menu{background:transparent; border:0; box-shadow:none}
+body[data-th="maliq"] .tot{font-family:"Bangers",Impact,sans-serif; color:#E8443A}
+body[data-th="maliq"] .kjday,body[data-th="maliq"] .kwgrid div{border:2px solid #1B1B1F}
+
+/* ---------- Musa: doodle comel ---------- */
+body[data-th="musa"]{--bg:#FFF4EA; --w1:#FCD9BF; --w2:#D3E6FA; --w3:#CBEBDD; --w4:#E7DBF8; --solid:#FFF4EA; --fg:#4A3426; --mute:#7D6656;
+  --glass:rgba(255,255,255,.82); --glass2:#fff; --edge:rgba(74,52,38,.12); --hi:transparent; --lo:transparent; --hair:rgba(74,52,38,.1); --shadow:rgba(232,131,74,.12);
+  --accent:#F5A66B; --on-accent:#fff; --ink:#E8834A; --ok:#3E8A63; --ok-bg:#DDF2E6; --warn:#C8553D; --warn-bg:#FDE1D6;
+  font-family:"Fredoka",var(--body)}
+body[data-th="musa"] #app .card{border-radius:26px; border:2px solid rgba(74,52,38,.1)}
+body[data-th="musa"] #app h2{font-family:"Fredoka",var(--body); font-weight:600; font-size:15px; letter-spacing:.03em; text-transform:none; color:#E8834A}
+body[data-th="musa"] .pnm{font-family:"Fredoka",var(--body); font-weight:700; font-size:36px; letter-spacing:0; color:#E8834A}
+body[data-th="musa"] .psub{font-family:var(--hand); font-size:18px; line-height:1.15; color:var(--fg)}
+body[data-th="musa"] .pfr{background:#FCD9BF; border:2.5px dashed #F5A66B; border-radius:30px}
+body[data-th="musa"] .pside .tile:nth-child(1){background:#CBEBDD} body[data-th="musa"] .pside .tile:nth-child(2){background:#D3E6FA} body[data-th="musa"] .pside .tile:nth-child(3){background:#E7DBF8}
+body[data-th="musa"] .pside .tile{border-radius:18px}
+body[data-th="maliq"] .menu .mi[aria-pressed="true"]{background:#E8443A; color:#fff}
+body[data-th="maliq"] .menu .mi{color:#1B1B1F}
