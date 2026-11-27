@@ -521,3 +521,35 @@ body[data-th="musa"] .pside .tile:nth-child(1){background:#CBEBDD} body[data-th=
 body[data-th="musa"] .pside .tile{border-radius:18px}
 body[data-th="maliq"] .menu .mi[aria-pressed="true"]{background:#E8443A; color:#fff}
 body[data-th="maliq"] .menu .mi{color:#1B1B1F}
+
+/* ================= 28 Nov 2026: wallet Syafiq, wellness anak, perbelanjaan, chores, rekod kerja ================= */
+.kdw{display:grid; gap:4px; padding:8px 0; border-top:1px solid var(--hair)} .kdw:first-of-type{border-top:0}
+.kdwh{display:flex; justify-content:space-between; align-items:baseline} .kdwh .lk{font-size:15px} .kdwh b{font-size:22px; font-weight:500; font-variant-numeric:tabular-nums} .kdwh b.neg{color:var(--warn)}
+.kwneed.hot{background:linear-gradient(135deg,rgba(255,196,90,.35),rgba(255,140,90,.28)); outline:2px solid rgba(242,140,60,.6)}
+p.kwwarn{justify-self:start; margin:0}
+.kwell .kwdays{display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:4px; margin:4px 0 10px}
+.kwd{display:flex; flex-direction:column; align-items:center; gap:1px; border:1.5px solid var(--edge); background:var(--glass2); border-radius:14px; padding:5px 0; color:var(--fg); min-height:58px}
+.kwd span{font-size:10px; color:var(--mute)} .kwd b{font-size:16px} .kwd i{font-style:normal; font-size:10px; line-height:1; min-height:11px; letter-spacing:-1px}
+.kwd.on{background:var(--ink); color:#fff; border-color:transparent} .kwd.on span{color:#fff} .kwd:disabled{opacity:.35}
+.kwbtns{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.kwb{position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; min-height:104px; border-radius:22px; border:2px dashed var(--edge); background:var(--glass2); color:var(--fg); font-size:15px; font-weight:700; padding:10px}
+.kwb svg{width:40px; height:40px} .kwb.on{border-style:solid; border-color:transparent; color:#2E2723; box-shadow:0 6px 16px var(--shadow)}
+.kwb em{position:absolute; top:8px; right:12px; font-style:normal; font-size:20px} .kwb:active{transform:scale(.97)}
+.kwall{font-size:22px; margin:10px 0 4px}
+.kxchart svg{width:100%; height:auto; display:block}
+.kxb{fill:var(--accent)} .kxb.on{fill:var(--ink)} .kxg{stroke:var(--hair); stroke-width:1} .kxa{stroke:var(--mute); stroke-width:1}
+.kxt{font-size:9px; fill:var(--mute); font-family:var(--body)} .kxt.b{fill:var(--fg); font-weight:700}
+.chlead{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; text-align:center}
+.chp{display:flex; flex-direction:column; align-items:center; background:var(--glass2); border:1px solid var(--edge); border-radius:18px; padding:6px 2px}
+.chp svg{width:52px; height:52px} .chp b{font-size:15px} .chp span{font-size:11px; color:var(--mute)} .chp.top{outline:2px solid #F2B33D; background:rgba(247,232,174,.5)}
+.chgrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(96px,1fr)); gap:8px; margin:4px 0 6px}
+.chb{position:relative; display:flex; flex-direction:column; align-items:center; gap:3px; min-height:96px; border-radius:20px; border:2px dashed var(--edge); background:var(--glass2); color:var(--fg); padding:10px 6px; font-weight:700; font-size:12.5px; text-align:center}
+.chb .chi{font-size:30px; line-height:1} .chb small{font-size:9px} .chb.on{border-style:solid; border-color:transparent; background:rgba(169,222,201,.75)} .chb em{position:absolute; top:6px; right:9px; font-style:normal; font-size:16px}
+.chic{font-size:18px!important}
+.wktab .wkscroll{overflow-x:auto; margin-top:6px}
+.wktab table{width:100%; border-collapse:collapse; font-size:12.5px; font-variant-numeric:tabular-nums}
+.wktab th{text-align:left; font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--mute); font-weight:600; padding:6px 6px 6px 0; border-bottom:1px solid var(--hair)}
+.wktab td{padding:7px 6px 7px 0; border-bottom:1px solid var(--hair); white-space:nowrap} .wktab td.n{font-weight:700} .wktab td.pl{white-space:normal; color:var(--mute); font-size:11.5px}
+body[data-th="maliq"] .kwb,body[data-th="maliq"] .chb,body[data-th="maliq"] .kwd{border:2.5px solid #1B1B1F; box-shadow:3px 3px 0 #1B1B1F}
+body[data-th="maliq"] .kwb.on{background:#FFD23F!important} body[data-th="maliq"] .kwd.on{background:#E8443A}
+body[data-th="musa"] .kwd.on{background:#F5A66B}

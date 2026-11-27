@@ -26,6 +26,7 @@ function doPost(e) {
     if (b.pay !== undefined) {                       // Shortcuts iPhone (Apple Pay): kunci berasingan, bukan kod keluarga
       const pk = props.getProperty('PAY_KEY');
       if (!pk || String(b.pay) !== pk) return out({ ok: false, error: 'kunci salah' });
+      if (b.work !== undefined) return out(withLock(() => workAdd(b)));   // rekod kerja Syafiq (Shortcuts: Arrive / Leave)
       const o = /syafiq/i.test(String(b.who)) ? 's' : /mira/i.test(String(b.who)) ? 'm' : '';
       const amt = parseFloat(String(b.amount == null ? '' : b.amount).replace(/[^0-9.]/g, ''));
       if (!o || !isFinite(amt) || amt <= 0) return out({ ok: false, error: 'maklumat tak lengkap' });
@@ -114,6 +115,7 @@ function app(b, admin, role) {
       if (!k || b.fresh) { k = Utilities.getUuid().replace(/-/g, '') + Utilities.getUuid().replace(/-/g, ''); props.setProperty('PAY_KEY', k); log(b.who, 'tetapan', 'kunci Shortcuts dicipta'); }
       return { ok: true, key: k };
     }
+    case 'work_list': return workList(String(b.ym || ''));
     case 'trx_add': return withLock(() => trxAdd(trxOwner(b.owner), b.row || {}));
     case 'trx_list': return trxList(trxOwner(b.owner), String(b.ym || ''));
     case 'trx_void': return withLock(() => {
@@ -463,3 +465,27 @@ function aiRead(text, img) {
 
 /** Jalankan sekali dari editor (butang Run) untuk beri kebenaran Sheet, Drive dan sambungan luar (Telegram, AI). */
 function izinkan() { folder(); UrlFetchApp.fetch('https://api.telegram.org', { muteHttpExceptions: true }); return 'OK'; }   // kebenaran Google diminta untuk semua fungsi sekali gus
+
+/* ================= Rekod kerja Syafiq (28 Nov 2026) =================
+   Shortcuts iPhone Syafiq: Automation Arrive / Leave tempat kerja -> POST {pay, work:'Masuk'|'Keluar'|'Singgah', place, lat, lng}.
+   Disimpan dalam tab KERJA SYAFIQ (tarikh | masa | jenis | tempat | lat | lng | direkod). Masa ikut zon waktu skrip. */
+const WORK_HEAD = ['Tarikh', 'Masa', 'Jenis', 'Tempat', 'Lat', 'Lng', 'Direkod'];
+function workSheet() {
+  const ss = SS(); let sh = ss.getSheetByName('KERJA SYAFIQ');
+  if (!sh) { sh = ss.insertSheet('KERJA SYAFIQ'); sh.getRange(1, 1, 1, WORK_HEAD.length).setValues([WORK_HEAD]).setFontWeight('bold'); sh.setFrozenRows(1); }
+  return sh;
+}
+function workAdd(b) {
+  const tz = Session.getScriptTimeZone(), now = new Date(), w = String(b.work || '').toLowerCase();
+  const k = /keluar|leave|balik|out/.test(w) ? 'Keluar' : /singgah|check|visit/.test(w) ? 'Singgah' : 'Masuk';
+  const row = [Utilities.formatDate(now, tz, 'yyyy-MM-dd'), Utilities.formatDate(now, tz, 'HH:mm'), k, String(b.place || '').slice(0, 120),
+    b.lat == null ? '' : Number(b.lat), b.lng == null ? '' : Number(b.lng), Utilities.formatDate(now, tz, 'yyyy-MM-dd HH:mm:ss')];
+  const sh = workSheet(); sh.getRange(sh.getLastRow() + 1, 1, 1, 2).setNumberFormat('@'); sh.appendRow(row);
+  return { ok: true, jenis: k, masa: row[1] };
+}
+function workList(ym) {
+  if (!/^\d{4}-\d{2}$/.test(ym)) return { ok: false, error: 'bulan salah' };
+  const sh = SS().getSheetByName('KERJA SYAFIQ'); if (!sh || sh.getLastRow() < 2) return { ok: true, rows: [] };
+  const v = sh.getRange(2, 1, sh.getLastRow() - 1, 4).getDisplayValues();
+  return { ok: true, rows: v.filter(r => String(r[0]).startsWith(ym)).map(r => ({ d: r[0], t: r[1], k: r[2], p: r[3] })) };
+}

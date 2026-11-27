@@ -85,7 +85,7 @@ function vWell(){if(!S.ready)return wait();const y=W.y,m=W.m,first=new Date(y,m,
    <p class="note">Tick dibuat dalam tab masing-masing. Tekan maskot untuk buka tab.</p></div>`+
    (top[1]?`<div class="card"><div class="champ">${wmasc(top[0],WCROWN)}<span><span class="cute">Juara minggu ini!</span><span class="note" style="display:block">${esc(pname(top[0]))} · ${top[1]} tick${wStreak(top[0])>1?' · streak '+wStreak(top[0])+' hari':''}</span></span>${wstk('fire')}</div>
      <div class="wscore">${cnt.map(([p,n])=>`<span><i style="background:${WCOL[p][3]}"></i>${esc(pname(p))} <b>${n}</b></span>`).join('')}</div></div>`:'')+(wkid()?'':vPeriod())}
-function wellWeek(id){if(!S.ready||!WCOL[id])return'';const wk=wWeek(),can=wCan(id),tm=new Date();tm.setHours(0,0,0,0);const kid=id==='maliq'||id==='musa';
+function wellWeek(id){if(!S.ready||!WCOL[id])return'';if(id==='maliq'||id==='musa')return kWellBig(id);const wk=wWeek(),can=wCan(id),tm=new Date();tm.setHours(0,0,0,0);const kid=id==='maliq'||id==='musa';
   const y=tm.getFullYear(),m=tm.getMonth(),dim=new Date(y,m+1,0).getDate();let mt=0;for(let d=1;d<=dim;d++)mt+=aStr(id,y,m,d).length;
   return`<div class="card wkc"><div class="head"><h2>Wellness minggu ini</h2><span class="tot">${wCount(id,wk)} tick</span></div>
    <div class="champ">${wmasc(id)}<span><span class="cute">${wStreak(id)>1?'Streak '+wStreak(id)+' hari!':'Jom mula!'}</span><span class="note" style="display:block">${can?'Tekan bulat untuk tick. Puasa: tekan lagi untuk tukar jenis.':'Hanya '+esc(pname(id))+' boleh tick di sini.'}</span></span></div>
@@ -200,7 +200,7 @@ function vTrips(){if(!S.ready)return wait();if(!W.tv){try{W.tv=localStorage.getI
   return h+`<div class="tgrid">${list.map(([x,i])=>`<button class="ttile" data-topen="${i}" style="background:${WCOVER[i%4]}" aria-label="Buka ${esc(x.n)}">${wimg(tripImg(x),'cimg')}<span class="tst">${esc((WTST.find(c=>c[0]===x.st)||['','Impian'])[1])}</span><span class="tnm"><b>${esc(x.n)}</b><small>${(x.hotels||[]).length} hotel${x.when?' · '+esc(x.when):''}</small></span></button>`).join('')}</div>`}
 
 /* ---------- Lagi ---------- */
-function vLagi(){const T=[['parenting','Parenting','Doa dan tips','moon'],['trips','Trips','Bucket list dan hotel','cloud'],['check','Checklist','Sama-sama settle','star'],['goals','Goals','Simpan sama-sama','heart'],['tetapan','Bot & tetapan','Telegram, kod anak, Apple Pay','sparkle']];
+function vLagi(){const T=[['parenting','Parenting','Doa dan tips','moon'],['trips','Trips','Bucket list dan hotel','cloud'],['chores','Chores','Tugas rumah bergilir','fire'],['check','Checklist','Sama-sama settle','star'],['goals','Goals','Simpan sama-sama','heart'],['tetapan','Bot & tetapan','Telegram, kod anak, Apple Pay','sparkle']];
   return`<div class="lagi">${T.map(t=>`<button class="card" data-main="${t[0]}">${wstk(t[3])}<b>${t[1]}</b><span class="note">${t[2]}</span></button>`).join('')}</div>`}
 
 /* ---------- klik ---------- */
@@ -224,6 +224,8 @@ function moreClick(b,d){const v=id=>{const e=document.getElementById(id);return 
   if(d.wdel){const[c,i,j]=d.wdel.split('|');if(c==='hotel'){const D=wdoc('trips',{items:[]});((D.items[+i]||{}).hotels||[]).splice(+j,1);wsave('trips')}else{const D=wdoc(c,{items:[]});(D.items||[]).splice(+i,1);wsave(c)}return R()}
   if(recipeClick(b,d,R,v))return true;
   if(kidClick(b,d,R,v))return true;
+  if(choreClick(b,d,R,v))return true;
+  if(workClick(b,d,R))return true;
   if(d.wsave&&!['trx','bud','acc'].includes(d.wsave)){const k=d.wsave,n=v('wf-n');if(!n){toast('Isi nama dulu.');return true}
     if(k==='plan'){const D=wdoc('menu',{plan:{},items:[]}),tm=new Date();if(v('wf-day')==='Esok')tm.setDate(tm.getDate()+1);D.plan=D.plan||{};D.plan[iso(tm)]={n,cook:v('wf-cook')};wsave('menu')}
     if(k==='recipe'){const D=wdoc('menu',{plan:{},items:[]});D.items=D.items||[];D.items.unshift({n,cat:v('wf-cat'),ing:v('wf-ing').split('\n').map(z=>z.trim()).filter(Boolean).slice(0,40).map(z=>({n:z,q:'',p:WFRESH.test(z)})),link:lk(v('wf-link')),note:v('wf-note'),by:who()});wsave('menu')}
@@ -271,6 +273,10 @@ function vTetapan(){if(!S.ready)return wait();if(wkid())return'';const tg=WL().t
   <div class="card"><div class="head"><h2>Penunjuk token</h2></div><div class="wleg"><span>${wtok('lo')} Rendah</span><span>${wtok('mid')} Sederhana</span><span>${wtok('hi')} Tinggi</span><span>Tiada bulat = percuma</span></div><p class="note">Hanya mesej yang dibaca bot guna token. Tick, tracker, belanja Apple Pay dan semua paparan percuma.</p></div>
   <div class="card"><div class="head"><h2>Kod anak</h2></div><p class="note">Tablet Maliq / Musa masuk guna kod ni. Mereka nampak Home, tab sendiri, Wellness dan Mood Meter sahaja.${I&&!I.old?' Sekarang: '+(I.hasKid?'dah ada kod.':'belum ada kod.'):''}</p><div class="add"><input class="txt" id="wf-kid" type="password" autocomplete="new-password" placeholder="Kod anak (4 aksara atau lebih)" maxlength="40"><button class="btn" data-setkid="1">Simpan</button></div></div>
   <div class="card"><div class="head"><h2>Kunci tab Finance</h2></div><p class="note">Password ni diminta bila orang lain buka tab Finance ${me?esc(PN[me]):'kau'}. Tab sendiri terus buka. Ini kunci skrin dalam app, bukan penyulitan data.${me?' Sekarang: '+(pins[me]?'dah ada password.':'belum ada password.'):''}</p>${me?`<div class="add"><input class="txt" id="wf-pin" type="password" autocomplete="new-password" placeholder="Password Finance ${esc(PN[me])}" maxlength="40"><button class="btn" data-setpin="1">Simpan</button></div>`:''}</div>
+  <div class="card"><div class="head"><h2>Rekod kerja Syafiq</h2><button class="sedit" data-paykey="1">Tunjuk kunci</button></div>
+   ${W.pay?`<p class="note">Alamat (URL):</p><p class="mono">${esc(window.HS_CONFIG.api)}</p><p class="note">Kunci (pay):</p><p class="mono">${esc(W.pay)}</p>`:''}
+   <p class="note">Ganti Life360: iPhone Syafiq rekod sendiri masa sampai dan keluar tempat kerja. Percuma, tiada token. Hasil dalam tab Syafiq dan tab KERJA SYAFIQ dalam Sheet.</p>
+   <ol class="steps"><li>Di iPhone Syafiq: Shortcuts › Automation › + › <b>Arrive</b>. Pilih lokasi pejabat, pilih <b>Run Immediately</b>, Next › New Blank Automation.</li><li>Tambah action "Get Contents of URL". URL: alamat di atas. Method: POST. Request Body: JSON.</li><li>Tambah medan: <b>pay</b> = kunci di atas, <b>work</b> = Masuk, <b>place</b> = nama tempat (cth Pejabat).</li><li>Buat automation kedua: <b>Leave</b> lokasi yang sama, medan sama tetapi <b>work</b> = Keluar.</li><li>Untuk tapak / site lain: ulang langkah 1 hingga 4 dengan lokasi tu, atau buat Shortcut biasa di Home Screen dengan <b>work</b> = Singgah dan <b>place</b> = Shortcut Input (taip nama tempat).</li></ol></div>
   <div class="card"><div class="head"><h2>Apple Pay ke Finance</h2><button class="sedit" data-paykey="1">Tunjuk kunci</button></div>
    ${W.pay?`<p class="note">Alamat (URL):</p><p class="mono">${esc(window.HS_CONFIG.api)}</p><p class="note">Kunci (pay):</p><p class="mono">${esc(W.pay)}</p>`:''}
    <ol class="steps"><li>Buka app Shortcuts › Automation › + › Transaction.</li><li>Pilih kad, pilih Run Immediately, tekan Next › New Blank Automation.</li><li>Tambah action "Get Contents of URL". URL: alamat di atas. Method: POST. Request Body: JSON.</li><li>Tambah medan: <b>pay</b> = kunci di atas, <b>who</b> = ${esc(me?PN[me]:'Mira')}, <b>amount</b> = Shortcut Input › Amount, <b>merchant</b> = Shortcut Input › Merchant, <b>card</b> = Shortcut Input › Card or Pass.</li><li>Setiap kali tap Apple Pay, belanja masuk tab TRX dalam Sheet dan Dashboard Finance. Percuma, tiada token.</li></ol></div>`}
@@ -500,7 +506,7 @@ function kEsok(id,compact){if(!S.ready)return'';const P=kwP(id),[dt,i]=kNext(id)
   if(!wkid())h+=f.t==='kbawa'&&f.i===id?`<div class="form">${wfl('Perlu bawa',wIn('wf-n','cth Duit yuran RM5, botol air'))}${wfl('Untuk',wSel('wf-kbd',['Hari '+lab,'Setiap hari'],'Hari '+lab))}</div>${wAct('kbawa')}`:`<button class="lk" data-wform="kbawa|${id}">+ Peringatan bawa barang</button>`;
   if(evs.length)h+=`<p class="dayh">Aktiviti sekolah</p>`+evs.map(([eid,e])=>`<div class="row"><span class="nm">${esc(e.title)}${e.tent?' <small class="qtag">dari Telegram</small>':''}<small>${dLab(e.date)}${e.time?' · '+fmtT(e.time):''}${e.note?' · '+esc(e.note):''}</small></span></div>`).join('');
   return h+`</div>`}
-function kidToday(id){if(!S.ready||!['maliq','musa'].includes(id))return'';return kEsok(id)+(kwW(id).daily>0||kwW(id).top.length?vKWallet(id):'')}
+function kidToday(id){if(!S.ready||!['maliq','musa'].includes(id))return'';return chToday(id,'Tugas aku hari ni')+kEsok(id)+(kwW(id).daily>0||kwW(id).top.length?vKWallet(id):'')}
 function kidClick(b,d,R,v){const num=s=>{const n=parseFloat(String(s).replace(/[^0-9.]/g,''));return isFinite(n)?n:null},me=(window.HS&&HS.who&&HS.who())||'';
   if(d.kwgo){S.main='home';S.person=d.person;S.ptab='wallet';S.edit=false;S.fe=null;S.evf=null;window.scrollTo(0,0);return R()}
   if(d.ksch){W.ksch=d.ksch;W.form=null;return R()}
@@ -518,3 +524,123 @@ function kidClick(b,d,R,v){const num=s=>{const n=parseFloat(String(s).replace(/[
   return false}
 document.addEventListener('change',e=>{const t=e.target,k=t&&t.dataset&&t.dataset.kpack;if(!k)return;const[id,key,...r]=k.split('|'),kk=r.join('|'),P=kwP(id);P.pack=P.pack||{};
   Object.keys(P.pack).forEach(x=>{if(x<TODAY)delete P.pack[x]});const a=P.pack[key]=P.pack[key]||[],j=a.indexOf(kk);t.checked?(j<0&&a.push(kk)):(j>=0&&a.splice(j,1));wsave('p-'+id);render(true)});
+
+/* ================= 28 Nov 2026: kotak anak, wallet Syafiq, wellness anak, perbelanjaan, chores, rekod kerja ================= */
+const ymOf=d=>d.getFullYear()+'-'+pad(d.getMonth()+1);
+const kwTopM=(w,ym)=>w.top.filter(t=>String(t.d).startsWith(ym)).reduce((s,t)=>s+(+t.a||0),0);
+const kwOutM=(w,ym)=>Object.entries(w.log).filter(([d])=>d.startsWith(ym)).reduce((s,[,l])=>s+(+l.s||0),0);
+/* komitmen bulanan anak: kad Finance (ibu bapa sahaja), disalin ke p-<anak>.cm supaya tablet anak dan bulan lepas tahu */
+function kCom(id){if(wkid())return null;const cl=kidList(id);return cl?(cl[1].items||[]).map(i=>({n:i.n,a:+i.a||0,w:i.w})):null}
+function kCm(id,ym){const P=kwP(id),c=kCom(id),cur=ym===ymOf(new Date());if(c&&cur){const t=c.reduce((s,i)=>s+i.a,0);P.cm=P.cm||{};if(P.cm[ym]!==t){P.cm[ym]=t;setTimeout(()=>wsave('p-'+id),0)}return t}return +((P.cm||{})[ym])||0}
+const kxExtra=(id,ym)=>(kwP(id).exp||[]).filter(x=>String(x.d).startsWith(ym));
+const kxTot=(id,ym)=>kCm(id,ym)+kwTopM(kwW(id),ym)+kxExtra(id,ym).reduce((s,x)=>s+(+x.a||0),0);
+function kTiles(id){const w=kwW(id),n=new Date(),ym=ymOf(n),nm=pname(id);
+  return`<div class="tiles"><div class="card tile"><b>${n2(kxTot(id,ym)).split('.')[0]}</b><small>RM belanja ${esc(nm)} ${KM[n.getMonth()]}</small></div><div class="card tile"><b>${n2(kwMon(w,n.getFullYear(),n.getMonth())).split('.')[0]}</b><small>RM duit belanja sebulan</small></div><div class="card tile"><b>${n2(kwBal(w)).split('.')[0]}</b><small>RM baki wallet sekolah</small></div></div>`}
+/* anggaran tambah duit bulan depan: keperluan bulan depan tolak baki yang dijangka tinggal hujung bulan ni */
+function kwEst(id){const w=kwW(id),n=new Date(),y=n.getFullYear(),m=n.getMonth(),dim=new Date(y,m+1,0).getDate(),ny=m===11?y+1:y,m2=(m+1)%12;let left=0;
+  for(let d=n.getDate();d<=dim;d++){const dt=new Date(y,m,d);if(w.days.includes(hIdx(dt))&&!(d===n.getDate()&&w.log[TODAY]))left++}
+  left=Math.max(0,left-Math.max(0,(+w.cuti[y+'-'+pad(m+1)]||0)-0));const need=kwMon(w,ny,m2),end=kwBal(w)-left*(+w.daily||0);return{need,end,add:Math.max(0,Math.ceil(need-end)),mon:KM[m2],y:ny,m2}}
+function kDadWallet(){if(!S.ready)return'';const n=new Date(),d26=n.getDate()>=26,me=wme();
+  const rows=['maliq','musa'].map(id=>{const w=kwW(id),b=kwBal(w),e=kwEst(id),seen=(w.seen||{})[me]||0,nw=Object.entries(w.log).filter(([,l])=>(l.at||0)>seen).sort((a,c)=>a[0]<c[0]?1:-1),low=w.daily>0&&b<w.daily*3,ym=ymOf(n);
+    return`<div class="kdw"><div class="kdwh"><button class="lk" data-person="${id}" data-kwgo="1">${esc(pname(id))}</button><b class="${low?'neg':''}">${rm(b)}</b></div>
+     <div class="kwgrid"><div><b>${rm(kwOutM(w,ym))}</b><small>dibelanja ${KM[n.getMonth()]}</small></div><div><b>${rm(kwTopM(w,ym))}</b><small>dimasukkan ${KM[n.getMonth()]}</small></div><div><b>${rm(w.daily)}</b><small>sehari</small></div></div>
+     ${nw.length?`<div class="row"><span class="nm">Belanja baru: ${nw.slice(0,3).map(([d,l])=>rm(l.s)+' ('+(d===TODAY?'hari ni':dLab(d))+')').join(', ')}</span><button class="sedit" data-kwseen="${id}">Okay</button></div>`:''}
+     ${low?`<p class="kwwarn">Baki tinggal kurang dari 3 hari belanja</p>`:''}
+     <div class="kwneed ${d26?'hot':''}"><span>${d26?'Tambah untuk '+e.mon:'Anggaran tambah '+e.mon}<small>${e.mon}: ${rm(e.need)} · dijangka tinggal ${rm(Math.max(0,e.end))} hujung bulan</small></span><b>${rm(e.add)}</b></div>
+     ${d26&&e.add>0?`<button class="sedit on" data-kwquick="${id}|${e.add}">Dah masuk ${rm(e.add)} untuk ${e.mon}</button>`:''}</div>`}).join('');
+  return`<div class="card kdwal"><div class="head"><h2>Wallet anak</h2><span class="tot">${rm(kwBal(kwW('maliq'))+kwBal(kwW('musa')))}</span></div>${rows}<p class="note">${d26?'Hari ni 26hb atau selepas: masa tambah duit belanja bulan depan.':'Setiap 26hb kotak ni bertukar warna dan tunjuk berapa perlu ditambah untuk bulan depan.'}</p></div>`}
+
+/* ---------- wellness anak: butang besar untuk satu hari ---------- */
+function kWellBig(id){const wk=wWeek(),can=wCan(id),tm=new Date();tm.setHours(0,0,0,0);W.kday=W.kday||{};const sel=W.kday[id]&&wk.some(d=>iso(d)===W.kday[id])?W.kday[id]:iso(tm),sd=wk.find(d=>iso(d)===sel)||tm,
+   s=aStr(id,sd.getFullYear(),sd.getMonth(),sd.getDate()),q=(aGet(id,sd.getFullYear(),sd.getMonth()).q||{})[sd.getDate()],all=s.length===4;
+  return`<div class="card wkc kwell"><div class="head"><h2>Wellness aku</h2><span class="tot">${wCount(id,wk)} ⭐ minggu ni</span></div>
+   <div class="kwdays">${wk.map(d=>{const k=iso(d),fut=d>tm,n=aStr(id,d.getFullYear(),d.getMonth(),d.getDate()).length;return`<button class="kwd ${k===sel?'on':''}" ${fut?'disabled':''} data-kwellday="${id}|${k}"><span>${DAYS[d.getDay()].slice(0,3)}</span><b>${d.getDate()}</b><i>${n===4?'⭐':'•'.repeat(n)||'·'}</i></button>`}).join('')}</div>
+   <div class="kwbtns">${WA.map((a,i)=>{const on=s.includes(i);return`<button class="kwb ${on?'on':''}" ${can?'':'disabled'} aria-pressed="${on}" data-wt="${id}|${sd.getFullYear()}|${sd.getMonth()}|${sd.getDate()}|${i}" style="${on?'background:'+WCOL[id][2]:''}">${i===3&&on?WPI[q||0]:WAI[i]}<span>${a}${i===3&&on?' · '+WPT[q||0]:''}</span>${on?'<em>✓</em>':''}</button>`}).join('')}</div>
+   ${all?`<p class="cute ctr kwall">Hebat! Semua siap ${iso(sd)===iso(tm)?'hari ni':''} ⭐</p>`:`<p class="note ctr">${can?'Tekan kotak bila dah buat. Puasa: tekan lagi untuk tukar jenis.':'Hanya '+esc(pname(id))+' boleh tick.'}</p>`}
+   <div class="champ">${wmasc(id)}<span><span class="cute">${wStreak(id)>1?'Streak '+wStreak(id)+' hari!':'Jom mula!'}</span><span class="note" style="display:block">${wOwe(id)?'Baki puasa ganti: '+wOwe(id)+' hari':'Kumpul bintang setiap hari'}</span></span></div></div>`}
+
+/* ---------- perbelanjaan anak ---------- */
+const KXC=['Pakaian','Sekolah','Kesihatan','Mainan','Makan','Aktiviti','Lain-lain'];
+function vKExp(id){if(!S.ready)return wait();W.kxm=W.kxm||ymOf(new Date());const ym=W.kxm,[yy,mm]=ym.split('-').map(Number),w=kwW(id),nm=pname(id),c=kCom(id),cm=kCm(id,ym),cur=ym===ymOf(new Date()),
+   top=w.top.filter(t=>String(t.d).startsWith(ym)),ex=kxExtra(id,ym).map(x=>[x,(kwP(id).exp||[]).indexOf(x)]),tot=kxTot(id,ym),f=W.form||{},kid=wkid();
+  let h=`<div class="card"><div class="head"><button class="round" data-kxm="-1" aria-label="Bulan sebelum">‹</button><h2>Belanja ${esc(nm)} · ${KM[mm-1]} ${yy}</h2><button class="round" data-kxm="1" aria-label="Bulan depan">›</button></div>
+   <div class="kwbig"><small>Jumlah bulan ni</small><b>${rm(tot)}</b></div>
+   <div class="kwgrid"><div><b>${rm(cm)}</b><small>aktiviti / komitmen</small></div><div><b>${rm(kwTopM(w,ym))}</b><small>duit belanja</small></div><div><b>${rm(tot-cm-kwTopM(w,ym))}</b><small>tambahan lain</small></div></div></div>`;
+  h+=`<div class="card"><div class="head"><h2>Aktiviti &amp; komitmen</h2><span class="tot">${rm(cm)}</span></div>`+
+   (cur&&c?(c.length?c.map(i=>`<div class="row"><span class="nm">${esc(i.n)}</span><span class="amt ${pc(i.w)}">${rm(i.a)}</span></div>`).join(''):`<p class="note">Kad komitmen ${esc(nm)} kosong.</p>`)
+    :`<p class="note">${cm?'Jumlah komitmen bulan ni: '+rm(cm)+'.':cur?'Tiada kad komitmen untuk '+esc(nm)+' dalam Finance.':'Tiada rekod komitmen untuk bulan ni.'}</p>`)+`</div>`;
+  h+=`<div class="card"><div class="head"><h2>Duit belanja sekolah</h2><span class="tot">${rm(kwTopM(w,ym))}</span></div>`+
+   (top.length?top.map(t=>`<div class="row"><span class="nm">${esc(t.n||'Duit belanja')}<small>${dLab(t.d)}${t.by?' · '+esc(t.by):''}</small></span><span class="amt">${rm(+t.a)}</span></div>`).join(''):'<p class="note">Belum ada duit dimasukkan bulan ni.</p>')+
+   `<p class="note">${esc(nm)} belanja ${rm(kwOutM(w,ym))} di sekolah bulan ni.</p></div>`;
+  h+=`<div class="card"><div class="head"><h2>Tambahan lain</h2>${kid?'':`<button class="sedit" data-wform="kxadd|${id}">+ Tambah</button>`}</div>`+
+   (f.t==='kxadd'&&f.i===id?`<div class="form">${wfl('Apa',wIn('wf-n','cth Kasut sekolah'))}${wfl('RM',wIn('wf-kxa','0.00'))}${wfl('Kategori',wSel('wf-kxc',KXC,'Sekolah'))}${wfl('Tarikh',`<input class="txt" id="wf-kxd" type="date" value="${cur?TODAY:ym+'-01'}">`)}${wfl('Siapa bayar',wSel('wf-kxw',['Syafiq','Mira','Bersama'],(window.HS&&HS.who&&HS.who())||'Mira'))}</div>${wAct('kxadd')}`:'')+
+   (ex.length?ex.sort((a,c)=>a[0].d<c[0].d?1:-1).map(([x,i])=>`<div class="row"><span class="nm">${esc(x.n)}<small>${esc(x.c||'')} · ${dLab(x.d)}${x.w?' · '+esc(x.w)+' bayar':''}</small></span><span class="amt">${rm(+x.a)}</span>${!kid&&S.edit?`<button class="del" data-kxdel="${id}|${i}" aria-label="Buang">×</button>`:''}</div>`).join(''):'<p class="note">Tiada belanja tambahan bulan ni.</p>')+`</div>`;
+  /* carta 12 bulan */
+  const ms=[];for(let k=11;k>=0;k--){const d=new Date(yy,mm-1-k,1);ms.push([ymOf(d),KM[d.getMonth()]])}const vals=ms.map(([k])=>kxTot(id,k)),mx=Math.max(1,...vals),W0=320,H0=150,bw=W0/12;
+  h+=`<div class="card"><div class="head"><h2>Belanja setiap bulan</h2><span class="tot">${rm(vals.reduce((a,b)=>a+b,0))}</span></div><div class="kxchart"><svg viewBox="0 0 ${W0} ${H0+34}" role="img" aria-label="Carta belanja ${esc(nm)} 12 bulan">`+
+   [0.5,1].map(f=>`<line x1="0" x2="${W0}" y1="${H0-H0*f*.86}" y2="${H0-H0*f*.86}" class="kxg"/><text x="0" y="${H0-H0*f*.86-3}" class="kxt">${n2(mx*f).split('.')[0]}</text>`).join('')+
+   vals.map((v,i)=>{const hh=v/mx*H0*.86,x=i*bw+bw*.18,on=ms[i][0]===ym;return`<rect x="${x}" y="${H0-hh}" width="${bw*.64}" height="${Math.max(hh,v?2:0)}" rx="4" class="kxb ${on?'on':''}"/><text x="${x+bw*.32}" y="${H0+14}" text-anchor="middle" class="kxt ${on?'b':''}">${ms[i][1]}</text>${on&&v?`<text x="${x+bw*.32}" y="${H0-hh-5}" text-anchor="middle" class="kxt b">${n2(v).split('.')[0]}</text>`:''}`}).join('')+
+   `<line x1="0" x2="${W0}" y1="${H0}" y2="${H0}" class="kxa"/></svg></div><p class="note">RM setiap bulan: komitmen + duit belanja dimasukkan + tambahan. Bulan sebelum app dipakai kosong.</p></div>`;
+  return h}
+
+/* ---------- chores keluarga ---------- */
+const CHIC=['🍽️','🚿','🛏️','🗑️','🧺','🧹','🪴','🧸','🐱','🚗','🍳','🪟','👕','📚'];
+const CHM=[['f','Tetap'],['d','Giliran setiap hari'],['w','Giliran setiap minggu']];
+const chDoc=()=>wdoc('chores',{items:[],done:{}});
+const wkNo=d=>Math.floor((wms(iso(d))-wms('2026-01-05'))/(7*864e5));
+const dayNo=d=>Math.round((wms(iso(d))-wms('2026-01-05'))/864e5);
+function chDefs(){if(wkid()){const P=WL()['p-'+wme()]||{};return P.chl||[]}return(WL().chores||{}).items||[]}
+/* siapa buat tugas c pada tarikh d: senarai id orang */
+function chWho(c,d){const who=(c.who||[]).filter(Boolean);if(!who.length)return[];if((c.days||[]).length&&!c.days.includes(hIdx(d)))return[];
+  if(c.m==='d')return[who[((dayNo(d)%who.length)+who.length)%who.length]];if(c.m==='w')return[who[((wkNo(d)%who.length)+who.length)%who.length]];return who}
+function chDone(c,d,p){const k=iso(d);if(p==='maliq'||p==='musa'){const P=WL()['p-'+p]||{};if(((P.chd||{})[k]||[]).includes(c.id))return true}return!!(((WL().chores||{}).done||{})[k]||{})[c.id+'|'+p]}
+function chPts(p,days){let n=0;chDefs().forEach(c=>days.forEach(d=>{if(chWho(c,d).includes(p)&&chDone(c,d,p))n+=+c.pts||1}));return n}
+function chMirror(){const D=chDoc();['maliq','musa'].forEach(id=>{const P=kwP(id);P.chl=(D.items||[]).map(c=>({id:c.id,n:c.n,ic:c.ic,who:c.who,m:c.m,days:c.days,pts:c.pts}));wsave('p-'+id)})}
+function chToday(p,title){const tm=new Date();tm.setHours(0,0,0,0);const mine=chDefs().filter(c=>chWho(c,tm).includes(p));if(!mine.length)return'';const dn=mine.filter(c=>chDone(c,tm,p)).length,can=wkid()?wme()===p:true;
+  return`<div class="card chcard"><div class="head"><h2>${title||'Tugas hari ni'}</h2><span class="tot">${dn} / ${mine.length}</span></div><div class="chgrid">${mine.map(c=>{const on=chDone(c,tm,p);return`<button class="chb ${on?'on':''}" ${can?'':'disabled'} aria-pressed="${on}" data-chtick="${c.id}|${p}"><span class="chi">${c.ic||'⭐'}</span><span>${esc(c.n)}</span><small>${'⭐'.repeat(+c.pts||1)}</small>${on?'<em>✓</em>':''}</button>`}).join('')}</div>${dn===mine.length?`<p class="cute ctr">Semua tugas siap! Terima kasih ♡</p>`:''}</div>`}
+function vChores(){if(!S.ready)return wait();const D=chDoc(),it=D.items||[],f=W.form||{},tm=new Date();tm.setHours(0,0,0,0);const wk=wWeek(),ppl=['syafiq','mira','maliq','musa'],me=wme();
+  const sc=ppl.map(p=>[p,chPts(p,wk.filter(d=>d<=tm))]).sort((a,b)=>b[1]-a[1]),top=sc[0]&&sc[0][1]>0?sc[0][0]:'';
+  let h=`<div class="card"><div class="head"><h2>Juara chores minggu ni</h2></div><div class="chlead">${sc.map(([p,n])=>`<div class="chp ${p===top?'top':''}">${wmasc(p,p===top?WCROWN:'')}<b>${n} ⭐</b><span>${esc(pname(p))}</span></div>`).join('')}</div><p class="note">Setiap tugas siap dapat bintang. Kiraan bermula semula setiap Isnin.</p></div>`;
+  h+=`<div class="card"><div class="head"><h2>Hari ni</h2><span class="tot">${DAYS[tm.getDay()]}</span></div>`+
+   (it.length?ppl.map(p=>{const mine=it.filter(c=>chWho(c,tm).includes(p));if(!mine.length)return'';return`<p class="dayh">${esc(pname(p))}</p><div class="chgrid">${mine.map(c=>{const on=chDone(c,tm,p);return`<button class="chb ${on?'on':''}" aria-pressed="${on}" data-chtick="${c.id}|${p}"><span class="chi">${c.ic||'⭐'}</span><span>${esc(c.n)}</span><small>${'⭐'.repeat(+c.pts||1)}</small>${on?'<em>✓</em>':''}</button>`}).join('')}</div>`}).join('')||'<p class="note">Tiada tugas hari ni.</p>'
+    :`<p class="note">Belum ada tugas. Tambah sendiri, atau mula dengan senarai contoh dan ubah ikut keluarga.</p><div class="racts"><button class="sedit on" data-chseed="1">Mula dengan contoh</button></div>`)+`</div>`;
+  h+=`<div class="card"><div class="head"><h2>Senarai tugas</h2><button class="sedit" data-wform="chadd">+ Tugas</button></div>`;
+  const form=(c,k)=>`<div class="form">${wfl('Tugas',wIn('wf-n','cth Basuh pinggan',c&&c.n))}<label class="fl full">Ikon<span class="chips">${CHIC.map(x=>`<button class="pill chic" data-chic="${x}" aria-pressed="${(W.chic||(c&&c.ic)||CHIC[0])===x}">${x}</button>`).join('')}</span></label>
+     <label class="fl full">Siapa<span class="chips">${ppl.map(p=>`<button class="pill" data-chwho="${p}" aria-pressed="${(W.chwho||(c&&c.who)||[]).includes(p)}">${esc(pname(p))}</button>`).join('')}</span></label>
+     ${wfl('Cara bahagi',wSel('wf-chm',CHM.map(x=>x[1]),(CHM.find(x=>x[0]===(c&&c.m))||CHM[0])[1]))}${wfl('Bintang',wSel('wf-chp',['1','2','3'],String((c&&c.pts)||1)))}
+     <label class="fl full">Hari (kosong = setiap hari)<span class="chips">${HARI.map((d,i)=>`<button class="pill" data-chday="${i+1}" aria-pressed="${(W.chdays||(c&&c.days)||[]).includes(i+1)}">${d.slice(0,3)}</button>`).join('')}</span></label></div>${wAct(k)}`;
+  if(f.t==='chadd')h+=form(null,'chadd');
+  h+=it.map((c,i)=>f.t==='chedit'&&f.i===i?form(c,'chedit'):`<div class="row"><span class="ic">${c.ic||'⭐'}</span><span class="nm">${esc(c.n)}<small>${(c.who||[]).map(pname).join(', ')||'belum pilih'} · ${(CHM.find(x=>x[0]===c.m)||CHM[0])[1]}${(c.days||[]).length?' · '+c.days.map(d=>HARI[d-1].slice(0,3)).join(' '):''} · ${'⭐'.repeat(+c.pts||1)}</small></span><button class="sedit" data-wform="chedit|${i}">Ubah</button>${S.edit?`<button class="del" data-chdel="${i}" aria-label="Buang ${esc(c.n)}">×</button>`:''}</div>`).join('');
+  return h+`<p class="note">Giliran bertukar sendiri setiap hari atau setiap minggu ikut susunan nama. Tablet anak nampak tugas mereka di Home.</p></div>`}
+function choreClick(b,d,R,v){const D=chDoc(),me=(window.HS&&HS.who&&HS.who())||'';
+  if(d.chtick){const[cid,p]=d.chtick.split('|'),k=TODAY;if(wkid()){if(wme()!==p)return true;const P=kwP(p);P.chd=P.chd||{};const a=P.chd[k]=P.chd[k]||[],j=a.indexOf(cid);j>=0?a.splice(j,1):a.push(cid);Object.keys(P.chd).forEach(x=>{if(x<iso(new Date(Date.now()-40*864e5)))delete P.chd[x]});wsave('p-'+p)}
+    else if(p==='maliq'||p==='musa'){const P=kwP(p);P.chd=P.chd||{};const a=P.chd[k]=P.chd[k]||[],j=a.indexOf(cid);j>=0?a.splice(j,1):a.push(cid);wsave('p-'+p)}
+    else{D.done=D.done||{};const m=D.done[k]=D.done[k]||{},kk=cid+'|'+p;m[kk]?delete m[kk]:m[kk]=me||1;Object.keys(D.done).forEach(x=>{if(x<iso(new Date(Date.now()-40*864e5)))delete D.done[x]});wsave('chores')}return R()}
+  if(d.chic){W.chic=d.chic;return R()}
+  if(d.chwho){const f=W.form||{},c=f.t==='chedit'?D.items[f.i]:null;W.chwho=W.chwho||(c?[...(c.who||[])]:[]);const j=W.chwho.indexOf(d.chwho);j>=0?W.chwho.splice(j,1):W.chwho.push(d.chwho);return R()}
+  if(d.chday){const f=W.form||{},c=f.t==='chedit'?D.items[f.i]:null;W.chdays=W.chdays||(c?[...(c.days||[])]:[]);const k=+d.chday,j=W.chdays.indexOf(k);j>=0?W.chdays.splice(j,1):W.chdays.push(k);W.chdays.sort();return R()}
+  if(d.chdel){D.items.splice(+d.chdel,1);wsave('chores');chMirror();return R()}
+  if(d.chseed){D.items=[['Basuh pinggan','🍽️',['syafiq','mira'],'d',[],2],['Bersih bilik air','🚿',['syafiq','mira'],'w',[6],3],['Kemas bilik tidur','🛏️',['maliq'],'f',[],1],['Buang sampah','🗑️',['maliq','syafiq'],'d',[],1],['Lipat baju','🧺',['mira','maliq'],'w',[7],2],['Kemas mainan','🧸',['musa'],'f',[],1]].map(([n,ic,who,m,days,pts])=>({id:newId(),n,ic,who,m,days,pts}));wsave('chores');chMirror();return R()}
+  if(d.wsave==='chadd'||d.wsave==='chedit'){const n=v('wf-n');if(!n){toast('Isi nama tugas dulu.');return true}const f=W.form,old=d.wsave==='chedit'?D.items[f.i]:null,
+     c={id:old?old.id:newId(),n:n.slice(0,40),ic:W.chic||(old&&old.ic)||CHIC[0],who:W.chwho||(old?old.who:[])||[],m:(CHM.find(x=>x[1]===v('wf-chm'))||CHM[0])[0],days:W.chdays||(old?old.days:[])||[],pts:+v('wf-chp')||1};
+    if(!c.who.length){toast('Pilih sekurang-kurangnya seorang.');return true}if(old)D.items[f.i]=c;else D.items.push(c);W.chic=W.chwho=W.chdays=null;W.form=null;wsave('chores');chMirror();return R()}
+  if(d.wform==='chadd'||String(d.wform||'').startsWith('chedit')||d.wcancel){W.chic=W.chwho=W.chdays=null}
+  return false}
+
+/* ---------- rekod kerja Syafiq (Shortcuts iPhone: Arrive / Leave → Apps Script → tab KERJA SYAFIQ) ---------- */
+function vWork(){if(!S.ready)return'';W.wkm=W.wkm||ymOf(new Date());const ym=W.wkm,[yy,mm]=ym.split('-').map(Number);W.work=W.work||{};const r=W.work[ym];
+  if(r===undefined){W.work[ym]=null;HS.call('work_list',{ym}).then(j=>{W.work[ym]=j.rows||[];render()}).catch(e=>{W.work[ym]={err:String(e&&e.message||e)};render()})}
+  const head=`<div class="head"><button class="round" data-wkm="-1" aria-label="Bulan sebelum">‹</button><h2>Rekod kerja · ${KM[mm-1]} ${yy}</h2><button class="round" data-wkm="1" aria-label="Bulan depan">›</button></div>`;
+  if(!r)return`<div class="card">${head}<p class="note">Memuat…</p></div>`;
+  if(r.err)return`<div class="card">${head}<p class="note">${/kenal|unknown|undefined|tak dibenarkan/i.test(r.err)?'Backend belum dikemas kini untuk rekod kerja. Tampal Code.gs baru dan deploy versi baru.':'Tak dapat ambil rekod: '+esc(r.err)}</p><p class="note">Cara sediakan: Lagi › Bot &amp; tetapan › Rekod kerja Syafiq.</p></div>`;
+  const by={};r.forEach(x=>(by[x.d]=by[x.d]||[]).push(x));const days=Object.keys(by).sort().reverse();let tot=0,nd=0;
+  const rows=days.map(d=>{const L=by[d].sort((a,c)=>a.t<c.t?-1:1),i=L.find(x=>x.k==='Masuk'),o=[...L].reverse().find(x=>x.k==='Keluar'),pl=[...new Set(L.map(x=>x.p).filter(Boolean))].join(', ');let hrs=null;
+    if(i&&o&&o.t>i.t){const[a,b]=i.t.split(':').map(Number),[c,e]=o.t.split(':').map(Number);hrs=(c*60+e-a*60-b)/60;tot+=hrs;nd++}
+    return`<tr><td>${dLab(d)}</td><td>${i?i.t:'—'}</td><td>${o?o.t:'—'}</td><td class="n">${hrs==null?'—':hrs.toFixed(1)}</td><td class="pl">${esc(pl)}</td></tr>`}).join('');
+  return`<div class="card wktab">${head}<div class="kwgrid"><div><b>${nd}</b><small>hari lengkap</small></div><div><b>${tot.toFixed(1)}</b><small>jumlah jam</small></div><div><b>${nd?(tot/nd).toFixed(1):'—'}</b><small>purata jam sehari</small></div></div>`+
+   (days.length?`<div class="wkscroll"><table><thead><tr><th>Tarikh</th><th>Masuk</th><th>Balik</th><th>Jam</th><th>Tempat</th></tr></thead><tbody>${rows}</tbody></table></div>`:`<p class="note">Tiada rekod bulan ni. Rekod masuk sendiri bila Shortcuts iPhone Syafiq dipasang (Lagi › Bot &amp; tetapan › Rekod kerja Syafiq).</p>`)+
+   `<p class="note">Masuk = rekod Masuk pertama, Balik = rekod Keluar terakhir hari tu. Data dalam tab KERJA SYAFIQ dalam Sheet.</p></div>`}
+function workClick(b,d,R){if(d.wkm||d.kxm||d.kwellday){if(d.kwellday){const[id,k]=d.kwellday.split('|');W.kday=W.kday||{};W.kday[id]=k;return R()}const key=d.wkm?'wkm':'kxm',[y,m]=(W[key]||ymOf(new Date())).split('-').map(Number),dt=new Date(y,m-1+(+(d.wkm||d.kxm)),1);W[key]=ymOf(dt);return R()}
+  if(d.kxdel){const[id,i]=d.kxdel.split('|'),P=kwP(id);(P.exp||[]).splice(+i,1);wsave('p-'+id);return R()}
+  if(d.wsave==='kxadd'){const id=W.form.i,n=b.closest('.card').querySelector('#wf-n').value.trim(),a=parseFloat(String(document.getElementById('wf-kxa').value).replace(/[^0-9.]/g,''));if(!n||!(a>0)){toast('Isi apa dan RM.');return true}const P=kwP(id);P.exp=P.exp||[];P.exp.push({n:n.slice(0,60),a,c:document.getElementById('wf-kxc').value,d:document.getElementById('wf-kxd').value||TODAY,w:document.getElementById('wf-kxw').value});W.kxm=ymOf(new Date((document.getElementById('wf-kxd').value||TODAY)+'T00:00'));wsave('p-'+id);W.form=null;return R()}
+  return false}
