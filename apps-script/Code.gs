@@ -124,6 +124,7 @@ function app(b, admin, role) {
       return { ok: true };
     });
     case 'tg_scan': return tgScan(String(b.id), b.who);
+    case 'tg_poll': return tgPoll();
     case 'og': return Object.assign({ ok: true }, ogRead(String(b.url)));
     case 'tg_allow': return withLock(() => {
       const id = String(b.id), chats = JSON.parse(props.getProperty('TG_CHATS') || '{}');
@@ -167,7 +168,9 @@ function app(b, admin, role) {
       return { ok: true, n: n };
     });
   }
-  if (admin && b.action === 'tg_setup') {              // Mac mini: sambung bot ke alamat web app
+  if (admin && b.action === 'tg_info') return { ok: true, info: tgApi('getWebhookInfo', {}), offset: props.getProperty('TG_OFFSET') || '' };
+  if (admin && b.action === 'tg_poll_mode') { const r = tgApi('deleteWebhook', { drop_pending_updates: false }); return { ok: !!r.ok, res: r, poll: tgPoll() }; }
+  if (admin && b.action === 'tg_setup') {              // (lama) webhook: Telegram anggap redirect 302 Apps Script sebagai gagal; guna tg_poll_mode
     const tok = props.getProperty('TG_TOKEN');
     if (!tok) return { ok: false, error: 'TG_TOKEN belum diisi dalam Script Properties' };
     let sec = props.getProperty('TG_SECRET');
@@ -328,6 +331,25 @@ function tgUpdate(u) {
     dataPut(rows, { p: 'well/inbox', d: ib }, 'bot', true);
   });
   if (m.chat.type === 'private') tgApi('sendMessage', { chat_id: m.chat.id, text: 'Disimpan. Buka app Home Syafiq dan tekan Scan untuk baca.' });
+}
+/* Tarik mesej baru dari Telegram (getUpdates). Dipanggil bila app dibuka dan oleh scan malam Mac mini.
+   Telegram simpan mesej 24 jam sahaja: kalau app tak dibuka dalam 24 jam, scan malam tetap tarik. */
+function tgPoll() {
+  const props = PropertiesService.getScriptProperties(), cache = CacheService.getScriptCache();
+  if (!props.getProperty('TG_TOKEN')) return { ok: true, n: 0, bot: false };
+  if (cache.get('tgpoll')) return { ok: true, n: 0, busy: true };   // satu tarikan pada satu masa
+  cache.put('tgpoll', '1', 60);
+  let n = 0;
+  try {
+    const off = Number(props.getProperty('TG_OFFSET') || 0);
+    const r = tgApi('getUpdates', { offset: off ? off + 1 : 0, timeout: 0, limit: 50, allowed_updates: ['message'] });
+    if (!r.ok) return { ok: false, error: 'Telegram: ' + String(r.description || 'ralat') };
+    (r.result || []).forEach(u => {
+      props.setProperty('TG_OFFSET', String(u.update_id));       // simpan dulu: mesej rosak tak tersangkut
+      try { tgUpdate(u); n++; } catch (err) { log('bot', 'telegram', 'ralat: ' + String(err && err.message || err).slice(0, 200)); }
+    });
+  } finally { cache.remove('tgpoll'); }
+  return { ok: true, n: n };
 }
 /* Dijalankan bila ditekan Scan dalam app: baca satu mesej dengan AI dan tukar jadi cadangan. */
 function tgScan(id, who) {

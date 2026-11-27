@@ -239,7 +239,8 @@ const WTOK={lo:'Token rendah',mid:'Token sederhana',hi:'Token tinggi'};
 const wtok=l=>WTOK[l]?`<span class="tokd ${l}" role="img" aria-label="${WTOK[l]}" title="${WTOK[l]}"></span>`:'';
 const WIT={event:['Acara','📅'],resepi:['Resepi','🍳'],makan:['Makan luar','🍽️'],parenting:['Parenting','🤲'],trip:['Trip','🏨'],belanja:['Belanja','💳']};
 const wmyP=()=>wme()==='syafiq'?'s':wme()==='mira'?'m':'';
-function inboxCard(){if(!S.ready||wkid())return'';const it=(WL().inbox||{}).items||[];if(!it.length)return'';const sc=W.scan||{};
+function tgPull(){if(wkid()||!window.HS||!HS.call||Date.now()-(W.pullAt||0)<60000)return;W.pullAt=Date.now();HS.call('tg_poll').catch(()=>{})}
+function inboxCard(){tgPull();if(!S.ready||wkid())return'';const it=(WL().inbox||{}).items||[];if(!it.length)return'';const sc=W.scan||{};
   return`<div class="card"><div class="head"><h2>Dari Telegram</h2><span class="tot">${it.length}</span></div>`+it.slice(0,W.open.iball?80:6).map(x=>{const f=x.f||{},T=WIT[f.type]||['Lain','📌'],del=`<button class="del" data-ibno="${x.id}" aria-label="Buang">×</button>`;
     if(x.raw)return`<div class="row prow"><span class="ic">💬</span><span class="nm">${esc(String(x.text||'(gambar sahaja)').slice(0,110))}<small>${esc(x.from||'')}${x.chat?' · '+esc(x.chat):''}${x.photo?' · ada gambar':''} · ${x.q?'menunggu scan malam ini':'belum discan'}</small></span>${x.q?'<span class="qtag">🌙 12 mlm</span>':`<button class="sedit" data-ibscan="${x.id}" ${sc[x.id]?'disabled':''}>${sc[x.id]?'Menghantar…':'Scan'}</button>`}${del}</div>`;
     if(f.type==='abai'||!f.type)return`<div class="row prow"><span class="ic">💬</span><span class="nm">${esc(String(x.text||'').slice(0,90))}<small>Dah discan: tiada apa untuk disimpan</small></span>${wtok(x.lvl)}${del}</div>`;
