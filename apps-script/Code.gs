@@ -262,7 +262,7 @@ function trxList(o, ym) {
 }
 
 /* ================= bot Telegram ================= */
-/* Script Properties: TG_TOKEN (dari BotFather), AI_KEY (kunci API Anthropic), AI_MODEL (pilihan; lalai claude-opus-5-5).
+/* Script Properties: TG_TOKEN (dari BotFather), AI_KEY (kunci API Anthropic), AI_MODEL (pilihan; lalai claude-haiku-5-5).
    Mesej dari chat yang dibenarkan dibaca oleh AI dan masuk "peti" (well/inbox). Tiada apa masuk kalendar tanpa ditekan Terima dalam app. */
 function tgApi(method, payload) {
   const tok = PropertiesService.getScriptProperties().getProperty('TG_TOKEN');
@@ -309,7 +309,7 @@ function tgUpdate(u) {
 }
 /* Satu panggilan Messages API. Jawapan mesti JSON sahaja. */
 function aiRead(text, img) {
-  const props = PropertiesService.getScriptProperties(), key = props.getProperty('AI_KEY'), model = props.getProperty('AI_MODEL') || 'claude-opus-5-5';
+  const props = PropertiesService.getScriptProperties(), key = props.getProperty('AI_KEY'), model = props.getProperty('AI_MODEL') || 'claude-haiku-5-5';   // cukup untuk baca tarikh, tempat dan bahan; tukar melalui AI_MODEL kalau perlu
   if (!key) return { ok: false };
   const today = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd (EEEE)');
   const sys = 'Kau penyusun mesej untuk app keluarga Malaysia (Syafiq, Mira, anak: Maliq, Musa). Hari ini ' + today + '. ' +
