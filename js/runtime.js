@@ -11,6 +11,7 @@
 
   async function call(action, body, opt) {
     if (!navigator.onLine) throw err('unavailable');
+    if (!CODE && !(opt && opt.noAuth)) throw err('locked');   // belum masuk kod: jangan hantar (elak reload berulang di skrin Masuk)
     let r;
     try {
       r = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, redirect: 'follow',
@@ -18,7 +19,7 @@
     } catch (e) { throw err('unavailable'); }
     let j; try { j = await r.json(); } catch (e) { throw err('unavailable'); }
     if (!j.ok) {
-      if (j.auth && !(opt && opt.noAuth)) { lsSet('code', ''); location.reload(); }
+      if (j.auth && !(opt && opt.noAuth) && lsGet('code', '')) { lsSet('code', ''); location.reload(); }
       throw Object.assign(err(j.conflict ? 'conflict' : 'tool_error', j.error), { res: j });
     }
     return j;
