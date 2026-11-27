@@ -407,3 +407,25 @@ ol.steps{margin:8px 0 0; padding-left:1.2rem; display:flex; flex-direction:colum
 .fbud{margin-bottom:8px} .fbud .bar{margin-top:3px; height:7px}
 .fchart{width:100%; height:auto} .fchart text{font-family:var(--body); font-size:8px; fill:var(--mute)}
 .dowc{display:grid; grid-template-columns:repeat(7,1fr); gap:4px} .dowc div{border-radius:11px; padding:5px 0; text-align:center; font-size:9.5px; border:1px solid var(--edge)} .dowc b{display:block; font-weight:500; font-size:11.5px}
+
+/* Fasa 6 (27 Nov 2026): kad resepi, menu mingguan, Trips bergambar */
+.rcard{border-top:1px solid var(--hair)} .rcard:first-of-type{border-top:0}
+.rhead{width:100%; display:flex; align-items:center; gap:10px; padding:6px 0; border:0; background:none; text-align:left; min-height:44px}
+.rhead .nm{flex:1; min-width:0} .rhead small{display:block; color:var(--mute); font-size:11px} .chev{color:var(--mute); font-size:12px}
+.rbody{padding:0 0 10px; display:flex; flex-direction:column; gap:8px}
+.ings{display:flex; flex-wrap:wrap; gap:5px}
+.ings span{font-size:11.5px; background:var(--glass2); border:1px solid var(--hair); border-radius:99px; padding:2px 9px} .ings span.fresh{background:#DDEFE5; color:#2E2723; border-color:transparent}
+.racts{display:flex; flex-wrap:wrap; gap:6px; align-items:center} .racts a.sedit{display:inline-flex; align-items:center; text-decoration:none}
+.wkr{min-height:40px} .wkr.now{background:var(--glass2); border-radius:12px; padding-inline:6px}
+.wkd{flex:none; width:30px; text-align:center; font-size:9px; letter-spacing:.08em; text-transform:uppercase; color:var(--mute); line-height:1.1} .wkd b{display:block; font-size:15px; font-weight:500; color:var(--fg); letter-spacing:0}
+textarea.txt{height:auto; border-radius:16px; padding:10px 14px; line-height:1.4; resize:vertical}
+.tbar{display:flex; align-items:center; justify-content:space-between; gap:8px} .tbar .chips{flex:1; min-width:0; padding:0}
+.vsw{flex:none; display:flex; background:var(--glass2); border:1px solid var(--edge); border-radius:99px; padding:3px}
+.vsw button{border:0; background:transparent; border-radius:99px; padding:4px 11px; font-size:11px; font-weight:500; color:var(--mute)} .vsw button[aria-pressed="true"]{background:var(--ink); color:#fff}
+.tgrid{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.ttile{position:relative; aspect-ratio:1/1.15; max-width:100%; border:1px solid var(--edge); border-radius:20px; overflow:hidden; padding:0; display:flex; align-items:flex-end; text-align:left; box-shadow:0 10px 24px var(--shadow)}
+.cimg{position:absolute; inset:0; width:100%; height:100%; object-fit:cover}
+.ttile .tnm{position:relative; width:100%; padding:22px 10px 9px; color:#fff; background:linear-gradient(transparent,rgba(30,22,18,.72))} .ttile b{display:block; font-size:13px; font-weight:500; letter-spacing:.14em; text-transform:uppercase} .ttile small{font-size:10.5px; opacity:.9}
+.ttile .tst{position:absolute; top:8px; left:8px; font-size:9px; letter-spacing:.12em; text-transform:uppercase; background:rgba(255,255,255,.85); color:#2E2723; border-radius:99px; padding:2px 8px}
+.cover{position:relative; overflow:hidden} .cover span{position:relative} .cover:has(.cimg) span{color:#fff; text-shadow:0 1px 6px rgba(0,0,0,.6)}
+.hth{flex:none; width:44px; height:44px; border-radius:12px; object-fit:cover}
