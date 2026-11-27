@@ -553,3 +553,8 @@ p.kwwarn{justify-self:start; margin:0}
 body[data-th="maliq"] .kwb,body[data-th="maliq"] .chb,body[data-th="maliq"] .kwd{border:2.5px solid #1B1B1F; box-shadow:3px 3px 0 #1B1B1F}
 body[data-th="maliq"] .kwb.on{background:#FFD23F!important} body[data-th="maliq"] .kwd.on{background:#E8443A}
 body[data-th="musa"] .kwd.on{background:#F5A66B}
+/* Sheets aku (halaman Mira) */
+.shg{margin:10px 2px 6px; font-size:12px; font-weight:700; color:var(--mute); text-transform:uppercase; letter-spacing:.04em}
+.shl{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px}
+.shb{display:flex; align-items:center; justify-content:space-between; gap:6px; height:auto; min-height:44px; padding:8px 12px; border-radius:14px; text-decoration:none; white-space:normal; text-align:left; line-height:1.25; font-size:13px; box-shadow:none}
+.shb span{flex:none; opacity:.55}

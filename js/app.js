@@ -298,6 +298,11 @@ function infoCard(id,title,empty){const p=FM(id),k='info:'+id,its=p.info||[];let
   else h+=its.length?its.map(r=>`<div class="row"><span class="nm">${esc(r.t)}<small style="white-space:pre-wrap">${esc(r.v)}</small></span></div>`).join(''):`<p class="note">${empty}</p>`;
   return h+'</div>'}
 const kInfo=id=>infoCard(id,'Info penting','Belum ada info. Contoh: sekolah dan kelas, nama cikgu dan no. telefon, alahan, kumpulan darah, klinik.');
+/* Sheets aku (28 Nov 2026): butang terus ke Google Sheet Mira. Senarai dalam db `well/sheets` {items:[{g,n,u}]}, bukan dalam repo awam, dan anak tak boleh baca. Hanya dalam halaman Mira, bila Mira sendiri buka. */
+function sheetsCard(){const L=((S.well||{}).sheets||{}).items||[],G=[];if(!L.length)return'';
+  L.forEach(x=>{if(!/^https:\/\/docs\.google\.com\//.test(x.u||''))return;let g=G.find(z=>z[0]===x.g);if(!g)G.push(g=[x.g,[]]);g[1].push(x)});
+  return`<div class="card"><div class="head"><h2>Sheets aku</h2><span class="tot">${G.reduce((a,g)=>a+g[1].length,0)}</span></div>`+G.map(([g,xs])=>`<p class="shg">${esc(g||'Lain')}</p><div class="shl">`+
+   xs.map(x=>`<a class="btn ghost shb" href="${esc(x.u)}" target="_blank" rel="noopener">${esc(x.n)}<span aria-hidden="true">↗</span></a>`).join('')+`</div>`).join('')+`</div>`}
 function hajatCard(id){const p=FM(id),k='hajat:'+id,its=p.hajat||[];let h=`<div class="card">${sh('Hajat '+esc(pname(id)),k)}`;
   if(isFe(k))h+=rowsEd([{k:'n',ph:'Wishlist / nak pergi / nak buat'}]);
   else h+=its.length?its.map(r=>`<div class="row"><span class="ic">✨</span><span class="nm">${esc(r.n)}</span></div>`).join(''):`<p class="note">Hadiah atau benda yang ${esc(pname(id))} teringin. Tekan Edit untuk tambah.</p>`;
@@ -306,7 +311,7 @@ function vAdult(id){const w=id==='syafiq'?'s':'m',nm=pname(id),com=[];
   sec('commitment').forEach(([,d])=>(d.items||[]).forEach(i=>{if(i.w===w)com.push(Object.assign({g:d.title},i))}));
   const ct=sum(com.map(i=>i.a)),ym=YM(),bi=((BILLS()||{items:[]}).items||[]).filter(i=>i.w===w),un=bi.filter(i=>i.a&&!(i.paid&&i.paid[ym]));
   const dv=sum(its('debt-'+id).map(dBal))+sum(its('ans-'+id).map(i=>ansCalc(i).bal||0));
-  let h=heroCard(id)+`<div class="tiles"><div class="card tile"><b>${n2(ct).split('.')[0]}</b><small>RM ${esc(nm)} bayar sebulan</small></div><div class="card tile"><b>${un.length}</b><small>bill belum bayar ${MN[S.month]}</small></div><div class="card tile"><b>${n2(dv).split('.')[0]}</b><small>RM hutang</small></div></div>`+(id==='syafiq'?kDadWallet()+vWork():'')+chToday(id)+personEvCard(id);
+  let h=heroCard(id)+`<div class="tiles"><div class="card tile"><b>${n2(ct).split('.')[0]}</b><small>RM ${esc(nm)} bayar sebulan</small></div><div class="card tile"><b>${un.length}</b><small>bill belum bayar ${MN[S.month]}</small></div><div class="card tile"><b>${n2(dv).split('.')[0]}</b><small>RM hutang</small></div></div>`+(id==='mira'&&wme()==='mira'?sheetsCard():'')+(id==='syafiq'?kDadWallet()+vWork():'')+chToday(id)+personEvCard(id);
   h+=`<div class="card"><div class="head"><h2>Komitmen ${esc(nm)}</h2><div class="hr"><span class="tot">${rm(ct)}</span><button class="sedit" data-goto="finance|commitment">Edit</button></div></div>`+
    (com.length?com.map(i=>`<div class="row"><span class="nm">${esc(i.n)}<small>${esc(i.g)}</small></span><span class="amt ${pc(w)}">${i.a==null?'—':rm(i.a)}</span></div>`).join(''):'<p class="note">Tiada komitmen.</p>')+`</div>`;
   h+=`<div class="card"><div class="head"><h2>Bill ${MN[S.month]}</h2><button class="sedit" data-goto="finance|bill">Edit</button></div>`+
