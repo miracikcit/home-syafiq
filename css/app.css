@@ -431,3 +431,17 @@ textarea.txt{height:auto; border-radius:16px; padding:10px 14px; line-height:1.4
 .hth{flex:none; width:44px; height:44px; border-radius:12px; object-fit:cover}
 
 .qtag{flex:none; font-size:11px; color:var(--mute); background:var(--glass2); border:1px dashed var(--edge); border-radius:99px; padding:3px 9px; white-space:nowrap}
+
+/* Buku resepi dari link (27 Nov 2026) */
+[data-rk][hidden]{display:none}
+.rtool{display:flex; gap:8px; align-items:center; margin:8px 0 4px} .rtool .txt{height:34px; font-size:13px}
+.rgrid{grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin-top:8px}
+.rtile{aspect-ratio:1/1.25; border-radius:16px} .rtile.on{outline:2px solid var(--ink); outline-offset:1px}
+.rtile b{font-size:11.5px; font-weight:600; letter-spacing:.02em; text-transform:none; line-height:1.2; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden}
+.rtile .tnm{padding:18px 7px 6px} .rtile small{font-size:9.5px} .rtile .tst{top:6px; left:6px; font-size:8px; padding:1px 6px}
+.rfood{position:absolute; inset:0 0 26px; display:flex; align-items:center; justify-content:center}
+.rfav{position:absolute; top:5px; right:7px; color:#E0607A; font-size:15px; text-shadow:0 1px 3px rgba(255,255,255,.8)}
+.dayh small.note{font-family:var(--body); font-weight:600; padding:0 0 0 4px}
+.tokleg{display:flex; flex-wrap:wrap; align-items:center; gap:5px; margin-top:6px}
+.sedit .tokd{margin-left:3px; vertical-align:middle}
+.card .head:has([data-rpaste]) h2{margin-right:auto}

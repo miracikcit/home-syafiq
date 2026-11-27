@@ -151,18 +151,15 @@ const wSel=(id,opts,v)=>`<select class="txt" id="${id}">${opts.map(o=>`<option $
 const wChips=(k,list)=>`<div class="chips">${['Semua',...list].map(c=>`<button class="pill" data-wcat="${k}|${c==='Semua'?'':c}" aria-pressed="${(W.cat[k]||'')===(c==='Semua'?'':c)}">${c}</button>`).join('')}</div>`;
 function menuOf(d){const D=menuDoc(),p=(D.plan||{})[d];if(p&&p.n)return p;const w=D.week;if(w&&w.names){const i=Math.round((wms(d)-wms(w.start))/864e5);if(i>=0&&i<7&&w.names[i])return{n:w.names[i],cook:''}}return null}
 function menuHomeCard(){if(!S.ready)return'';const t=menuOf(TODAY);
-  if(!t||!t.n)return`<div class="card"><div class="head"><h2>Menu hari ini</h2><button class="sedit" data-main="menu">Pilih</button></div><p class="note">Belum pilih menu hari ini.</p></div>`;
-  return`<div class="card mhome"><div class="head"><h2>Menu hari ini</h2><button class="sedit" data-main="menu">Menu</button></div>${wrow('sparkle,heart,star')}<div class="ctr">${wfood(t.n,84)}<span class="cute big">${esc(t.n)}</span><span class="note">${t.cook?esc(t.cook)+' masak · ':''}yum!</span></div>${wrow('pot,flower,heart,sparkle,chef')}</div>`}
+  if(!t||!t.n)return`<div class="card"><div class="head"><h2>Menu hari ini</h2><button class="sedit on" data-rpaste="1" aria-label="Tampal link resepi">＋ Link resepi</button><button class="sedit" data-main="menu">Pilih</button></div><p class="note">Belum pilih menu hari ini.</p></div>`;
+  return`<div class="card mhome"><div class="head"><h2>Menu hari ini</h2><button class="sedit on" data-rpaste="1" aria-label="Tampal link resepi">＋ Link resepi</button><button class="sedit" data-main="menu">Menu</button></div>${wrow('sparkle,heart,star')}<div class="ctr">${wfood(t.n,84)}<span class="cute big">${esc(t.n)}</span><span class="note">${t.cook?esc(t.cook)+' masak · ':''}yum!</span></div>${wrow('pot,flower,heart,sparkle,chef')}</div>`}
 function vMenu(){if(!S.ready)return wait();const D=menuDoc(),t=menuOf(TODAY),tm=new Date();tm.setDate(tm.getDate()+1);const e=menuOf(iso(tm)),cat=W.cat.menu||'',items=(D.items||[]).map((x,i)=>[x,i]).filter(([x])=>!cat||x.cat===cat),f=W.form;
   let h=`<div class="card"><div class="head"><h2>Menu hari ini</h2><button class="sedit" data-wform="plan">${t&&t.n?'Tukar':'Pilih'}</button></div>`+
    (f&&f.t==='plan'?`<div class="form">${wfl('Hidangan utama',wIn('wf-n','cth Ayam masak merah',t&&t.n))}${wfl('Siapa masak',wSel('wf-cook',['Bonda','Apak','Leftover','Delivery','Makan luar'],t&&t.cook))}${wfl('Untuk',wSel('wf-day',['Hari ini','Esok'],'Hari ini'))}</div>${wAct('plan')}`
     :t&&t.n?`<div class="mhero"><span><span class="lab">${t.cook?esc(t.cook)+' masak':'Makan hari ini'}</span><span class="cute big">${esc(t.n)}</span></span>${wfood(t.n,78)}</div>`:`<p class="note">Belum pilih. Tekan Pilih, atau tekan "Jadi menu" pada resepi di bawah.</p>`)+
    `<p class="note" style="margin-top:6px"><b>Esok:</b> ${e&&e.n?esc(e.n):'belum pilih'}</p>${wrow('heart,star,pot,flower,sparkle,heart')}</div>`+wChips('menu',WMCAT)+
    weekCard(D)+groceryCard(D)+
-   `<div class="card"><div class="head"><h2>Buku resepi</h2><button class="sedit" data-wform="recipe">+ Tambah</button></div>`+
-   (f&&f.t==='recipe'?`<div class="form">${wfl('Nama',wIn('wf-n','cth Ayam goreng berempah'))}${wfl('Kategori',wSel('wf-cat',WMCAT,cat||'Ayam'))}${wfl('Link video (pilihan)',wIn('wf-link','https://'))}<label class="fl full">Bahan (satu baris satu bahan)<textarea class="txt" id="wf-ing" rows="5" maxlength="1500" placeholder="1/2 biji kobis&#10;300g ayam&#10;2 ulas bawang putih"></textarea></label>${wfl('Nota (pilihan)',wIn('wf-note','masa, harga'))}</div>${wAct('recipe')}`:'')+
-   (items.length?items.map(([x,i])=>{const op=W.open['r'+i],ing=x.ing||[];return`<div class="rcard"><button class="rhead" data-wopen="r${i}" aria-expanded="${!!op}">${wfood(x.cat==='Makan luar'?'kedai':x.n+' '+x.cat,42)}<span class="nm"><span class="cute">${esc(x.n)}</span><small>${esc(x.cat||'')}${ing.length?' · '+ing.length+' bahan':x.cat==='Makan luar'?'':' · bahan belum lengkap'}${x.c?' · dimasak '+x.c+'×':x.cat==='Makan luar'?'':' · baru'}${x.by?' · '+esc(x.by):''}</small></span>${wtok(x.tok)}<span class="chev">${op?'▾':'▸'}</span></button>
-     ${op?`<div class="rbody">${ing.length?`<div class="ings">${ing.map(g=>`<span class="${g.p?'fresh':''}">${esc(g.q?g.q+' ':'')}${esc(g.n)}</span>`).join('')}</div>`:''}${x.note?`<p class="note">${esc(x.note)}</p>`:''}<div class="racts">${x.link?`<a class="sedit" href="${esc(x.link)}" target="_blank" rel="noopener">Tengok video</a>`:''}<button class="sedit" data-setmenu="${i}">Jadi menu hari ini</button>${x.cat==='Makan luar'?'':`<button class="sedit" data-cooked="${i}">Dah masak</button>`}${S.edit?`<button class="del" data-wdel="menu|${i}" aria-label="Buang ${esc(x.n)}">×</button>`:''}</div></div>`:''}</div>`}).join(''):`<p class="note">Belum ada resepi. Tekan + Tambah, atau hantar link resepi kepada bot Telegram. Tekan Edit di atas untuk buang.</p>`)+`</div>`;
+   rBook(D,cat,f);
   /* tracker makan */
   const y=W.y,m=W.m,first=new Date(y,m,1).getDay(),dim=new Date(y,m+1,0).getDate(),md=(WL()['meal-'+y+'-'+pad(m+1)]||{}).d||{},c={};Object.values(md).forEach(k=>c[k]=(c[k]||0)+1);
   let cells='<div></div>'.repeat(first);for(let d=1;d<=dim;d++){const k=WMK.find(x=>x[0]===md[d]);cells+=`<button class="pc mc ${wiso(y,m,d)===TODAY?'today':''}" data-mday="${d}" style="${k?'background:'+k[3]:''}" aria-label="${d} ${MFULL[m]}${k?' '+k[1]:''}">${k?wstk(k[2]):''}${d}</button>`}
@@ -225,9 +222,11 @@ function moreClick(b,d){const v=id=>{const e=document.getElementById(id);return 
   if(d.tst){const[i,s]=d.tst.split('|'),D=wdoc('trips',{items:[]}),x=D.items[+i];if(x){x.st=s;wsave('trips')}return R()}
   if(d.hlove){const[i,j]=d.hlove.split('|'),D=wdoc('trips',{items:[]}),hh=((D.items[+i]||{}).hotels||[])[+j];if(hh){hh.love=hh.love||[];const w=who()||'?',k=hh.love.indexOf(w);k>=0?hh.love.splice(k,1):hh.love.push(w);wsave('trips')}return R()}
   if(d.wdel){const[c,i,j]=d.wdel.split('|');if(c==='hotel'){const D=wdoc('trips',{items:[]});((D.items[+i]||{}).hotels||[]).splice(+j,1);wsave('trips')}else{const D=wdoc(c,{items:[]});(D.items||[]).splice(+i,1);wsave(c)}return R()}
+  if(recipeClick(b,d,R,v))return true;
   if(d.wsave&&!['trx','bud','acc'].includes(d.wsave)){const k=d.wsave,n=v('wf-n');if(!n){toast('Isi nama dulu.');return true}
     if(k==='plan'){const D=wdoc('menu',{plan:{},items:[]}),tm=new Date();if(v('wf-day')==='Esok')tm.setDate(tm.getDate()+1);D.plan=D.plan||{};D.plan[iso(tm)]={n,cook:v('wf-cook')};wsave('menu')}
     if(k==='recipe'){const D=wdoc('menu',{plan:{},items:[]});D.items=D.items||[];D.items.unshift({n,cat:v('wf-cat'),ing:v('wf-ing').split('\n').map(z=>z.trim()).filter(Boolean).slice(0,40).map(z=>({n:z,q:'',p:WFRESH.test(z)})),link:lk(v('wf-link')),note:v('wf-note'),by:who()});wsave('menu')}
+    if(k==='redit'){const D=wdoc('menu',{plan:{},items:[]}),x=(D.items||[])[W.form.i];if(x){const old={};(x.ing||[]).forEach(g=>old[(g.q?g.q+' ':'')+g.n]=g);x.n=n;x.nu=1;x.cat=v('wf-cat');x.note=v('wf-note');x.ing=v('wf-ing').split('\n').map(z=>z.trim()).filter(Boolean).slice(0,40).map(z=>old[z]||{n:z,q:'',p:WFRESH.test(z)});if(x.ing.length&&x.st==='x'){x.st='';x.err=''}W.rsel=rkey(x);wsave('menu')}}
     if(k==='par'){const D=wdoc('parenting',{items:[]});D.items=D.items||[];D.items.unshift({n,cat:v('wf-cat'),for:v('wf-for'),body:v('wf-body'),link:lk(v('wf-link')),by:who()});wsave('parenting')}
     if(k==='trip'){const D=wdoc('trips',{items:[]});D.items=D.items||[];D.items.unshift({n,when:v('wf-when'),bud:num(v('wf-bud')),note:v('wf-note'),st:'impian',hotels:[]});wsave('trips')}
     if(k==='hotel'){const D=wdoc('trips',{items:[]}),x=D.items[W.form.i];if(x){x.hotels=x.hotels||[];const hh={n,price:num(v('wf-price')),link:lk(v('wf-link')),note:v('wf-note'),by:who(),love:[]};x.hotels.push(hh);wsave('trips');if(hh.link)wcall('og',{url:hh.link}).then(j=>{if(j&&j.img){hh.img=j.img;wsave('trips');render()}}).catch(()=>{})}}
@@ -244,7 +243,7 @@ function ibAuto(){const me=(window.HS&&HS.who&&HS.who())||'',D=WL().inbox;if(!me
   go.forEach(x=>{const m=ibAccept(x);if(m!=null){msgs.push(m);D.items=D.items.filter(z=>z!==x)}else x.auto=''});wsave('inbox');if(msgs.length)setTimeout(()=>toast(go.length>1?go.length+' cadangan dari Telegram masuk sendiri.':msgs[0]),300)}
 function inboxCard(){tgPull();if(!S.ready||wkid())return'';ibAuto();const it=(WL().inbox||{}).items||[];if(!it.length)return'';const sc=W.scan||{};
   return`<div class="card"><div class="head"><h2>Dari Telegram</h2><span class="tot">${it.length}</span></div>`+it.slice(0,W.open.iball?80:6).map(x=>{const f=x.f||{},T=WIT[f.type]||['Lain','📌'],del=`<button class="del" data-ibno="${x.id}" aria-label="Buang">×</button>`;
-    if(x.raw)return`<div class="row prow"><span class="ic">💬</span><span class="nm">${esc(String(x.text||'(gambar sahaja)').slice(0,110))}<small>${esc(x.from||'')}${x.chat?' · '+esc(x.chat):''}${x.photo?' · ada gambar':''} · ${x.q?'Mac mini sedang baca, masuk sendiri dalam beberapa minit':'belum discan'}</small></span>${x.q?'<span class="qtag">⏳ sedang dibaca</span>':`<button class="sedit" data-ibscan="${x.id}" ${sc[x.id]?'disabled':''}>${sc[x.id]?'Menghantar…':'Scan'}</button>`}${del}</div>`;
+    if(x.raw)return`<div class="row prow"><span class="ic">💬</span><span class="nm">${esc(String(x.text||'(gambar sahaja)').slice(0,110))}<small>${esc(x.from||'')}${x.chat?' · '+esc(x.chat):''}${x.photo?' · ada gambar':''} · ${x.q?'Mac mini sedang baca, masuk sendiri dalam beberapa minit':'belum discan'}</small></span>${x.q?'<span class="qtag">⏳ sedang dibaca</span>':`<button class="sedit" data-ibscan="${x.id}" ${sc[x.id]?'disabled':''}>${sc[x.id]?'Menghantar…':'Scan '+wtok(x.photo?'mid':'lo')}</button>`}${del}</div>`;
     if(f.type==='abai'||!f.type)return`<div class="row prow"><span class="ic">💬</span><span class="nm">${esc(String(x.text||'').slice(0,90))}<small>Dah discan: tiada apa untuk disimpan</small></span>${wtok(x.lvl)}${del}</div>`;
     return`<div class="row prow"><span class="ic">${T[1]}</span><span class="nm">${esc(f.title||T[0])}<small>${T[0]}${f.date?' · '+dLab(f.date):''}${f.time?' · '+fmtT(f.time):''}${f.price!=null?' · '+rm(f.price):''}${f.place?' · '+esc(f.place):''}${(f.ing||[]).length?' · '+f.ing.length+' bahan':''}${x.from?' · '+esc(x.from):''}</small>${f.note?`<small>${esc(f.note)}</small>`:''}</span>${x.by?'':wtok(x.lvl)}<button class="sedit" data-ibok="${x.id}">Terima</button>${del}</div>`}).join('')+
    (it.length>6?`<button class="lk" data-wopen="iball">${W.open.iball?'Tunjuk 6 sahaja':'Tunjuk semua '+it.length}</button>`:'')+`<p class="note">Bot hanya simpan mesej. Tekan Scan pada yang kau nak: Mac mini baca dalam beberapa minit guna langganan Claude (tiada kos tambahan) dan hasil masuk sendiri ke kalendar / senarai. Acara masuk sebagai tentative. Yang tak ditekan Scan tak dibaca.</p></div>`}
@@ -360,3 +359,78 @@ function groceryCard(D){const G=groceryList(D);if(!G.length)return'';const need=
    need.map(g=>`<div class="row"><span class="nm">${esc(g.label)}<small>${g.p?'segar · ':''}${g.n>1?'guna dalam '+g.n+' resepi':g.p?'guna sekali sahaja minggu ni':'1 resepi'}</small></span><button class="sedit" data-pantry="${esc(g.k)}">Dah ada</button></div>`).join('')+
    (have.length?`<p class="dayh">Sentiasa ada di rumah</p><div class="ings">${have.map(g=>`<button class="sedit" data-pantry="${esc(g.k)}">${esc(g.label)} ×</button>`).join('')}</div>`:'')+
    `<p class="note">Bahan segar yang "guna sekali sahaja" mungkin berlebih. Tekan Tukar pada menu untuk cari resepi yang guna bahan sama.</p></div>`}
+
+
+/* ================= Buku resepi dari link (27 Nov 2026) =================
+   Tampal link dari mana-mana platform: kad terus muncul (tiada token). Kalau mod "Mac mini isi bahan", resepi ditanda st:'q';
+   Mac mini (recipe_read.py) ambil kapsyen, transkrip suara dan teks skrin tanpa token, kemudian Haiku susun bahan (token rendah)
+   dan tulis terus ke resepi yang sama ikut id. st: 'q' beratur, 'x' tak lengkap, '' siap. */
+const RSRC=[['TikTok',/tiktok\./],['Instagram',/instagram\./],['Facebook',/facebook\.|fb\.watch|fb\.com/],['YouTube',/youtube\.|youtu\.be/],['Threads',/threads\./],['X',/twitter\.|\/\/x\.com/],['Pinterest',/pinterest\.|pin\.it/]];
+const rsrc=u=>{const h=String(u||'').toLowerCase();return(RSRC.find(z=>z[1].test(h))||['Web'])[0]};
+const rurl=t=>{const m=String(t||'').match(/https?:\/\/[^\s<>"']+/i);return m?m[0].replace(/[).,!?]+$/,''):''};
+const rimg=(u,c)=>/^(https:\/\/|blob\/)/i.test(String(u||''))?`<img class="${c}" src="${esc(u)}" alt="" loading="lazy" referrerpolicy="no-referrer">`:'';
+const rkey=x=>x.id||x.n;
+const rneed=x=>!!x.link&&x.cat!=='Makan luar'&&!(x.ing||[]).length;
+const rk=x=>esc((x.n+' '+(x.cat||'')+' '+(x.src||'')+' '+(x.ing||[]).map(g=>g.n).join(' ')).toLowerCase());
+const rhid=x=>W.rq&&!rk(x).includes(W.rq)?' hidden':'';
+function rAdd(link){const D=wdoc('menu',{plan:{},items:[]});D.items=D.items||[];const dup=D.items.find(x=>x.link===link);
+  if(dup){W.rsel=rkey(dup);toast('Link ni dah ada dalam buku resepi.');return}
+  const auto=(D.rmode||'auto')==='auto',it={id:newId(),n:'Resepi dari '+rsrc(link),cat:'',ing:[],link,src:rsrc(link),note:'',by:(window.HS&&HS.who&&HS.who())||'',st:auto?'q':''};
+  D.items.unshift(it);W.rsel=it.id;W.rq='';W.rf='';W.cat.menu='';wsave('menu');toast(auto?'Disimpan. Mac mini isi bahan dalam beberapa minit.':'Link disimpan dalam buku resepi.');
+  wcall('og',{url:link}).then(j=>{const x=(menuDoc().items||[]).find(z=>z.id===it.id);if(!x||!j)return;let ch=false;
+    const t=String(j.title||'').replace(/\s*[|–-]\s*(TikTok|Instagram|Facebook|YouTube).*$/i,'').trim();
+    if(t&&!x.nu&&/^Resepi dari /.test(x.n)&&!/^(tiktok|instagram|facebook|youtube|log ?in|login|masuk)\b/i.test(t)){x.n=t.slice(0,80);ch=true}
+    if(j.img&&!x.img){x.img=j.img;ch=true}
+    if(ch){wsave('menu');render()}}).catch(()=>{})}
+function rPaste(){const go=u=>{S.main='menu';S.edit=false;S.person=null;S.fe=null;S.evf=null;try{localStorage.setItem('main','menu')}catch(_){}
+    if(u){W.form=null;rAdd(u)}else{W.form={t:'rlink'};toast('Tiada link dalam clipboard. Tampal dalam kotak ni.')}
+    render(true);setTimeout(()=>{const e=document.getElementById(u?'rbook':'wf-link');if(e){e.scrollIntoView({block:u?'start':'center'});if(!u)e.focus()}},80)};
+  let p;try{p=navigator.clipboard.readText()}catch(_){p=Promise.reject()}
+  p.then(t=>go(rurl(t))).catch(()=>go(''))}
+function rCard(x,i,open){const ing=x.ing||[],f=W.form,lo=wtok('lo'),out=x.cat==='Makan luar',
+   sub=[x.cat,x.src,ing.length?ing.length+' bahan':out?'':x.st==='q'?'sedang dibaca':'bahan belum ada',x.c?'dimasak '+x.c+'×':out?'':'belum cuba',x.by].filter(Boolean).map(esc).join(' · ');
+  let h=`<div class="rcard" data-rk="${rk(x)}"${rhid(x)}><button class="rhead" data-rsel="${i}" aria-expanded="${!!open}">${rimg(x.img,'hth')||wfood(out?'kedai':x.n+' '+x.cat,42)}<span class="nm"><span class="cute">${x.fav?'♥ ':''}${esc(x.n)}</span><small>${sub}</small></span>${x.st==='q'?'<span class="qtag">⏳</span>':''}${wtok(x.tok)}<span class="chev">${open?'▾':'▸'}</span></button>`;
+  if(!open)return h+'</div>';
+  h+=`<div class="rbody">`+(x.st==='q'?`<p class="note">⏳ Mac mini sedang baca link ni (kapsyen, suara dan teks dalam video). Bahan masuk sendiri dalam beberapa minit.</p>`:'')+
+   (x.st==='x'&&x.err?`<p class="note">⚠️ ${esc(x.err)}</p>`:'')+
+   (ing.length?`<div class="ings">${ing.map(g=>`<span class="${g.p?'fresh':''}">${esc(g.q?g.q+' ':'')}${esc(g.n)}</span>`).join('')}</div>`:'')+
+   (x.note?`<p class="note">${esc(x.note)}</p>`:'')+(x.via?`<p class="note">Dibaca dari: ${esc(x.via)}</p>`:'');
+  if(f&&f.t==='rcap'&&f.i===i)return h+`<label class="fl full">Kapsyen atau senarai bahan<textarea class="txt" id="wf-cap" rows="6" maxlength="5000" placeholder="Salin kapsyen dari post tu dan tampal di sini"></textarea></label><div class="racts"><button class="sedit on" data-rcapq="${i}">Mac mini susun ${lo}</button><button class="sedit" data-rcapf="${i}">Setiap baris = satu bahan</button><button class="sedit" data-wcancel="1">Batal</button></div><p class="note">"Setiap baris = satu bahan" tak guna token: sesuai kalau kau tampal senarai bahan sahaja.</p></div></div>`;
+  if(f&&f.t==='redit'&&f.i===i)return h+`<div class="form">${wfl('Nama',wIn('wf-n','',x.n))}${wfl('Kategori',wSel('wf-cat',WMCAT,x.cat||'Lain-lain'))}<label class="fl full">Bahan (satu baris satu bahan)<textarea class="txt" id="wf-ing" rows="6" maxlength="2500">${esc(ing.map(g=>(g.q?g.q+' ':'')+g.n).join('\n'))}</textarea></label>${wfl('Nota (pilihan)',wIn('wf-note','masa, harga',x.note))}</div>${wAct('redit')}</div></div>`;
+  return h+`<div class="racts">${x.link?`<a class="sedit" href="${esc(x.link)}" target="_blank" rel="noopener">Buka ${esc(x.src||'link')}</a>`:''}<button class="sedit" data-setmenu="${i}">Jadi menu hari ini</button>${out?'':`<button class="sedit" data-cooked="${i}">Dah masak</button>`}<button class="sedit ${x.fav?'on':''}" data-rfav="${i}" aria-pressed="${!!x.fav}">♥ Favourite</button>`+
+   (x.st==='q'?`<button class="sedit" data-rstop="${i}">Batal baca</button>`:rneed(x)?`<button class="sedit" data-rread="${i}">${x.st==='x'?'Cuba lagi':'Mac mini baca bahan'} ${lo}</button><button class="sedit" data-wform="rcap|${i}">Tampal kapsyen</button>`:'')+
+   `<button class="sedit" data-wform="redit|${i}">Edit</button>${S.edit?`<button class="del" data-wdel="menu|${i}" aria-label="Buang ${esc(x.n)}">×</button>`:''}</div></div></div>`}
+function rBook(D,cat,f){if(!W.rv){try{W.rv=localStorage.getItem('rview')||'grid'}catch(_){W.rv='grid'}}
+  const rf=W.rf||'',grid=W.rv==='grid',mode=D.rmode||'auto',all=(D.items||[]).map((x,i)=>[x,i]),
+   list=all.filter(([x])=>(!cat||x.cat===cat)&&(rf==='nak'?!x.c&&x.cat!=='Makan luar':rf==='dah'?x.c>0:rf==='fav'?!!x.fav:true)),
+   need=list.filter(([x])=>rneed(x)),rest=list.filter(([x])=>!rneed(x)),sel=W.rsel,isSel=x=>sel!=null&&rkey(x)===sel,pick=rest.find(([x])=>isSel(x));
+  let h=`<div class="card" id="rbook"><div class="head"><h2>Buku resepi</h2><button class="sedit on" data-rpaste="1">＋ Link</button><button class="sedit" data-wform="recipe">+ Tulis</button></div>`+
+   (f&&f.t==='rlink'?`<label class="fl full">Link resepi<input class="txt" id="wf-link" type="url" inputmode="url" autocomplete="off" placeholder="TikTok, Instagram, Facebook, YouTube, blog"></label><div class="racts" style="margin:8px 0"><button class="sedit on" data-rlinkok="1">Simpan</button><button class="sedit" data-wcancel="1">Batal</button></div>`:'')+
+   (f&&f.t==='recipe'?`<div class="form">${wfl('Nama',wIn('wf-n','cth Ayam goreng berempah'))}${wfl('Kategori',wSel('wf-cat',WMCAT,cat||'Ayam'))}${wfl('Link video (pilihan)',wIn('wf-link','https://'))}<label class="fl full">Bahan (satu baris satu bahan)<textarea class="txt" id="wf-ing" rows="5" maxlength="1500" placeholder="1/2 biji kobis&#10;300g ayam&#10;2 ulas bawang putih"></textarea></label>${wfl('Nota (pilihan)',wIn('wf-note','masa, harga'))}</div>${wAct('recipe')}`:'');
+  if(!all.length)return h+`<p class="note">Belum ada resepi. Copy link resepi dari TikTok, Instagram, Facebook atau YouTube, kemudian tekan ＋ Link. Tekan + Tulis untuk taip sendiri.</p></div>`;
+  h+=`<div class="rtool"><input class="txt" id="rsearch" type="search" autocomplete="off" placeholder="Cari nama atau bahan" value="${esc(W.rq||'')}" aria-label="Cari resepi"><div class="vsw" role="group" aria-label="Cara paparan"><button data-rview="grid" aria-pressed="${grid}">Kotak</button><button data-rview="list" aria-pressed="${!grid}">List</button></div></div>`+
+   `<div class="chips">${[['','Semua'],['nak','Nak cuba'],['dah','Dah cuba'],['fav','♥ Favourite']].map(c=>`<button class="pill" data-rf="${c[0]}" aria-pressed="${rf===c[0]}">${c[1]}</button>`).join('')}</div>`;
+  if(need.length)h+=`<p class="dayh">Belum lengkap <small class="note">${need.length} link tanpa bahan</small></p>`+need.map(([x,i])=>rCard(x,i,isSel(x))).join('');
+  if(need.length&&rest.length)h+=`<p class="dayh">Resepi</p>`;
+  if(!list.length)h+=`<p class="note">Tiada resepi dalam pilihan ni.</p>`;
+  if(grid)h+=(pick?rCard(pick[0],pick[1],true):'')+`<div class="tgrid rgrid">${rest.map(([x,i])=>`<button class="ttile rtile ${isSel(x)?'on':''}" data-rsel="${i}" data-rk="${rk(x)}"${rhid(x)} style="background:${WCOVER[i%4]}" aria-label="Buka ${esc(x.n)}">${rimg(x.img,'cimg')||`<span class="rfood">${wfood(x.cat==='Makan luar'?'kedai':x.n+' '+x.cat,58)}</span>`}${x.src?`<span class="tst">${esc(x.src)}</span>`:''}${x.fav?'<span class="rfav">♥</span>':''}<span class="tnm"><b>${esc(x.n)}</b><small>${esc(x.cat||'')}${(x.ing||[]).length?' · '+x.ing.length+' bahan':''}</small></span></button>`).join('')}</div>`;
+  else h+=rest.map(([x,i])=>rCard(x,i,isSel(x))).join('');
+  return h+`<p class="dayh">Bila tampal link</p><div class="chips"><button class="pill" data-rmode="auto" aria-pressed="${mode==='auto'}">Mac mini isi bahan ${wtok('lo')}</button><button class="pill" data-rmode="link" aria-pressed="${mode==='link'}">Simpan link sahaja</button></div>`+
+   `<p class="note">${mode==='auto'?'Kad muncul terus, kemudian Mac mini baca kapsyen, suara dan teks video (tiada token) dan Claude susun bahan (token rendah, langganan sedia ada). Siap dalam 1 hingga 5 minit.':'Link disimpan dengan gambar dan tajuk sahaja, tiada token. Tekan "Mac mini baca bahan" pada mana-mana kad bila perlu.'}</p>`+
+   `<p class="note tokleg">${wtok('lo')} token rendah ${wtok('mid')} sederhana ${wtok('hi')} tinggi · tiada bulat = tiada token</p></div>`}
+function recipeClick(b,d,R,v){const D=()=>wdoc('menu',{plan:{},items:[]}),at=i=>(D().items||[])[+i],sv=()=>wsave('menu');let x;
+  if(d.rpaste){rPaste();return true}
+  if(d.rlinkok){const u=rurl(v('wf-link'));if(!u){toast('Link tak sah. Mesti bermula dengan https://');return true}W.form=null;rAdd(u);return R()}
+  if(d.rsel!=null){x=at(d.rsel);if(x){const k=rkey(x);W.rsel=W.rsel===k?null:k;W.form=null}return R()}
+  if(d.rf!=null){W.rf=d.rf;return R()}
+  if(d.rview){W.rv=d.rview;try{localStorage.setItem('rview',W.rv)}catch(_){}return R()}
+  if(d.rmode){D().rmode=d.rmode;sv();return R()}
+  if(d.rfav!=null){x=at(d.rfav);if(x){x.fav=!x.fav;sv()}return R()}
+  if(d.rread!=null){x=at(d.rread);if(x){if(!x.id){x.id=newId();W.rsel=x.id}x.st='q';x.err='';sv();toast('Beratur. Mac mini baca dalam beberapa minit.')}return R()}
+  if(d.rstop!=null){x=at(d.rstop);if(x){x.st='';delete x.cap;sv()}return R()}
+  if(d.rcapq!=null||d.rcapf!=null){x=at(d.rcapq!=null?d.rcapq:d.rcapf);const t=v('wf-cap');if(!x)return R();if(t.length<5){toast('Tampal kapsyen dulu.');return true}
+    if(d.rcapq!=null){if(!x.id){x.id=newId();W.rsel=x.id}x.cap=t.slice(0,5000);x.st='q';x.err='';toast('Beratur. Mac mini susun dalam beberapa minit.')}
+    else{x.ing=t.split('\n').map(z=>z.replace(/^[\s•*\-–·]+/,'').replace(/^\d{1,2}[.)]\s+/,'').trim()).filter(z=>z.length>1&&!/:$/.test(z)).slice(0,40).map(z=>({n:z.slice(0,80),q:'',p:WFRESH.test(z)}));x.st='';x.err=''}
+    W.form=null;sv();return R()}
+  return false}
+document.addEventListener('input',e=>{if(e.target&&e.target.id==='rsearch'){W.rq=e.target.value.trim().toLowerCase();document.querySelectorAll('[data-rk]').forEach(el=>{el.hidden=!!W.rq&&!el.dataset.rk.includes(W.rq)})}});
