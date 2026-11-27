@@ -1,5 +1,5 @@
 /* Home Syafiq: simpan app dalam phone (buka tanpa internet) dan hidang gambar dari Drive private (laluan blob/<id>). */
-const V = '2026.11.27-1';
+const V = '2026.11.27-2';
 const CORE = ['./', 'index.html', 'manifest.webmanifest', 'css/app.css?v=' + V, 'js/config.js?v=' + V, 'js/runtime.js?v=' + V, 'js/more.js?v=' + V, 'js/app.js?v=' + V, 'icons/icon-180.png', 'icons/icon-192.png'];
 let CFG = null;
 

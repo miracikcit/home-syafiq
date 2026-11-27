@@ -135,6 +135,38 @@ function app(b, admin, role) {
       return { ok: true, chats: chats };
     });
   }
+  if (admin && b.action === 'inbox_queue') {          // Mac mini: senarai mesej yang menunggu scan malam
+    const items = (wellDoc(dataRows(), 'inbox').items || []).filter(x => x.raw && x.q), outp = [];
+    items.slice(0, 25).forEach(x => {
+      const o = { id: x.id, text: x.text || '', from: x.from || '', chat: x.chat || '' };
+      const url = (String(x.text).match(/https?:\/\/[^\s]+/) || [])[0];
+      if (url) { const og = ogRead(url); o.url = url; o.page = { title: og.title, desc: og.desc, img: og.img }; }
+      if (x.photo && props.getProperty('TG_TOKEN')) {
+        const f = tgApi('getFile', { file_id: x.photo });
+        if (f.ok && f.result && f.result.file_path && (f.result.file_size || 0) < 4000000) {
+          const r = UrlFetchApp.fetch('https://api.telegram.org/file/bot' + props.getProperty('TG_TOKEN') + '/' + f.result.file_path, { muteHttpExceptions: true });
+          if (r.getResponseCode() === 200) { o.img = Utilities.base64Encode(r.getBlob().getBytes()); o.mime = /\.png$/i.test(f.result.file_path) ? 'image/png' : 'image/jpeg'; }
+        }
+      }
+      outp.push(o);
+    });
+    return { ok: true, items: outp, today: Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd (EEEE)') };
+  }
+  if (admin && b.action === 'inbox_result') {         // Mac mini: hantar hasil scan
+    return withLock(() => {
+      const rows = dataRows(), ib = wellDoc(rows, 'inbox'); let n = 0;
+      (b.results || []).forEach(r => {
+        const it = (ib.items || []).find(x => x.id === String(r.id));
+        if (!it || !it.raw) return;
+        const f = aiClean(r.f || {});
+        if (r.url && !f.link) f.link = String(r.url).slice(0, 400);
+        if (r.img && /^https:\/\//i.test(r.img)) f.img = String(r.img).slice(0, 600);
+        it.raw = false; it.f = f; it.tok = 0; it.lvl = ''; it.by = 'Mac mini'; delete it.q; delete it.photo; n++;
+      });
+      if (n) dataPut(rows, { p: 'well/inbox', d: ib }, 'Mac mini', true);
+      return { ok: true, n: n };
+    });
+  }
   if (admin && b.action === 'tg_setup') {              // Mac mini: sambung bot ke alamat web app
     const tok = props.getProperty('TG_TOKEN');
     if (!tok) return { ok: false, error: 'TG_TOKEN belum diisi dalam Script Properties' };
@@ -303,6 +335,14 @@ function tgScan(id, who) {
   const it0 = (wellDoc(dataRows(), 'inbox').items || []).find(x => x.id === id);
   if (!it0) return { ok: false, error: 'mesej tak dijumpai' };
   if (!it0.raw) return { ok: true, item: it0 };
+  if (!props.getProperty('AI_KEY')) {                 // tiada kunci AI: beratur untuk scan malam oleh Mac mini (langganan Claude)
+    return withLock(() => {
+      const rows = dataRows(), ib = wellDoc(rows, 'inbox'), it = (ib.items || []).find(x => x.id === id);
+      if (!it) return { ok: false, error: 'mesej tak dijumpai' };
+      it.q = Date.now(); dataPut(rows, { p: 'well/inbox', d: ib }, who || 'app', true);
+      return { ok: true, item: it, queued: true };
+    });
+  }
   let img = null, extra = '', og = null;
   if (it0.photo) {
     const f = tgApi('getFile', { file_id: it0.photo });
@@ -328,6 +368,13 @@ function tgScan(id, who) {
     dataPut(rows, { p: 'well/inbox', d: ib }, who || 'app', true);
     return { ok: true, item: it };
   });
+}
+function aiClean(f) {
+  const S = (v, n) => v == null ? null : String(v).slice(0, n);
+  return { type: ['event', 'resepi', 'makan', 'parenting', 'trip', 'belanja'].indexOf(f.type) >= 0 ? f.type : 'abai', title: S(f.title, 100), date: /^\d{4}-\d{2}-\d{2}$/.test(String(f.date)) ? f.date : null, time: /^\d{1,2}:\d{2}$/.test(String(f.time)) ? f.time : null,
+    who: Array.isArray(f.who) ? f.who.filter(x => ['maliq', 'musa', 'syafiq', 'mira'].indexOf(x) >= 0) : [], cat: S(f.cat, 40), note: S(f.note, 400), link: /^https?:\/\//i.test(String(f.link)) ? S(f.link, 400) : null,
+    price: isFinite(Number(f.price)) && f.price != null ? Number(f.price) : null, place: S(f.place, 80), body: S(f.body, 3000),
+    ing: Array.isArray(f.ing) ? f.ing.slice(0, 40).map(x => ({ n: S(x && x.n, 60) || '', q: S(x && x.q, 40) || '', p: !!(x && x.p) })).filter(x => x.n) : [] };
 }
 /* Ambil tajuk, keterangan dan gambar (og:) dari satu halaman awam. Percuma, tiada AI. */
 function ogRead(url) {
@@ -371,11 +418,8 @@ function aiRead(text, img) {
   const a = txt.indexOf('{'), z = txt.lastIndexOf('}');
   if (a < 0 || z <= a) return { ok: true, tok: tok, f: { type: 'abai' } };
   let f; try { f = JSON.parse(txt.slice(a, z + 1)); } catch (e) { return { ok: true, tok: tok, f: { type: 'abai' } }; }
-  const S = (v, n) => v == null ? null : String(v).slice(0, n);
-  return { ok: true, tok: tok, f: { type: ['event', 'resepi', 'makan', 'parenting', 'trip', 'belanja'].indexOf(f.type) >= 0 ? f.type : 'abai', title: S(f.title, 100), date: /^\d{4}-\d{2}-\d{2}$/.test(String(f.date)) ? f.date : null, time: /^\d{1,2}:\d{2}$/.test(String(f.time)) ? f.time : null,
-    who: Array.isArray(f.who) ? f.who.filter(x => ['maliq', 'musa', 'syafiq', 'mira'].indexOf(x) >= 0) : [], cat: S(f.cat, 40), note: S(f.note, 400), link: /^https?:\/\//i.test(String(f.link)) ? S(f.link, 400) : null,
-    price: isFinite(Number(f.price)) && f.price != null ? Number(f.price) : null, place: S(f.place, 80), body: S(f.body, 3000),
-    ing: Array.isArray(f.ing) ? f.ing.slice(0, 40).map(x => ({ n: S(x && x.n, 60) || '', q: S(x && x.q, 40) || '', p: !!(x && x.p) })).filter(x => x.n) : [] } };
+  return { ok: true, tok: tok, f: aiClean(f) };
+
 }
 
 /** Jalankan sekali dari editor (butang Run) untuk beri kebenaran Sheet, Drive dan sambungan luar (Telegram, AI). */

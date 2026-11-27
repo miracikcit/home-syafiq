@@ -429,3 +429,5 @@ textarea.txt{height:auto; border-radius:16px; padding:10px 14px; line-height:1.4
 .ttile .tst{position:absolute; top:8px; left:8px; font-size:9px; letter-spacing:.12em; text-transform:uppercase; background:rgba(255,255,255,.85); color:#2E2723; border-radius:99px; padding:2px 8px}
 .cover{position:relative; overflow:hidden} .cover span{position:relative} .cover:has(.cimg) span{color:#fff; text-shadow:0 1px 6px rgba(0,0,0,.6)}
 .hth{flex:none; width:44px; height:44px; border-radius:12px; object-fit:cover}
+
+.qtag{flex:none; font-size:11px; color:var(--mute); background:var(--glass2); border:1px dashed var(--edge); border-radius:99px; padding:3px 9px; white-space:nowrap}
