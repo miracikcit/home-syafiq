@@ -659,3 +659,26 @@ body[data-th="musa"] .kwd.on{background:#F5A66B}
 .hpchips{display:flex; gap:6px; flex-wrap:wrap}
 .hpchips .btn{height:30px; padding:0 10px; font-size:12.5px}
 @media (max-width:420px){.hplv{grid-template-columns:1fr} .hpfoods{grid-template-columns:repeat(2,minmax(0,1fr))} .hpnext{max-width:100%; margin-left:0}}
+
+/* Susun kad macam widget phone (layout.js): hanya Mira, tekan lama kad */
+.layoff{display:none!important}
+body.laycan #app .layi{-webkit-touch-callout:none}
+body.laying #app .layi{position:relative; outline:2px dashed color-mix(in srgb,var(--ink) 45%,transparent); outline-offset:2px; animation:layjig .28s ease-in-out infinite alternate; -webkit-user-select:none; user-select:none}
+body.laying #app .layi:nth-child(even){animation-delay:-.14s}
+body.laying #app .layi > :not(.layc){pointer-events:none}
+body.laying #app .layi.layhid{opacity:.42; animation:none}
+body.laying #app .layi.layhid > :not(.layc){filter:grayscale(1)}
+body.laying #app .layi.laydrag{animation:none; z-index:20; box-shadow:0 18px 40px var(--shadow); opacity:.96}
+body.laying #app .layi.laypick{animation-duration:.18s}
+@keyframes layjig{from{transform:rotate(-.45deg)}to{transform:rotate(.45deg)}}
+@media (prefers-reduced-motion:reduce){body.laying #app .layi{animation:none}}
+.layc{display:flex; gap:6px; justify-content:flex-end; align-items:center; position:absolute; top:8px; left:8px; right:8px; z-index:3}
+body.laying #app .layi{padding-top:54px!important}
+.layc button{min-width:36px; height:36px; border-radius:999px; border:1px solid var(--edge); background:var(--glass2); color:var(--fg); font:600 15px var(--body); padding:0 10px; cursor:pointer}
+.layc .layh{margin-right:auto; display:grid; place-items:center; padding:0; touch-action:none; cursor:grab; background:var(--accent); color:var(--on-accent); border-color:transparent}
+.layc .layv{font-size:12px; letter-spacing:.04em; text-transform:uppercase}
+#laybar{position:fixed; z-index:31; left:50%; transform:translateX(-50%); bottom:calc(92px + env(safe-area-inset-bottom,0px)); display:flex; align-items:center; gap:8px; padding:8px 8px 8px 16px; border-radius:999px; width:max-content; max-width:calc(100% - 32px); box-shadow:0 10px 30px var(--shadow); background:var(--glass2); -webkit-backdrop-filter:blur(18px) saturate(1.4); backdrop-filter:blur(18px) saturate(1.4); border:1px solid var(--edge)}
+#laybar span{display:flex; flex-direction:column; font:600 13px var(--body); margin-right:4px; min-width:0}
+#laybar small{font-weight:400; font-size:11px; color:var(--mute); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+#laybar .btn{padding:8px 14px}
+body.laying #toast{bottom:calc(150px + env(safe-area-inset-bottom,0px))}

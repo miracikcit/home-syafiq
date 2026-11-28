@@ -1032,7 +1032,7 @@ function render(force){const ae=document.activeElement;
   if(S.main==='home')h=S.person?vPerson():vHome();else if(S.main==='check')h=vCheck();else if(S.main==='goals')h=vGoals();else if(S.main==='well')h=vWell();else if(S.main==='menu')h=vMenu();else if(S.main==='lagi')h=vLagi();else if(S.main==='parenting')h=vParenting();else if(S.main==='trips')h=vTrips();else if(S.main==='tetapan')h=vTetapan();else if(S.main==='chores')h=vChores();
   else if(finLocked(S.fp))h=finSwitch()+vFinLock(S.fp);else{const P=S.fp;h=finSwitch()+`<div class="menu glass">${fTabs().map(t=>`<button class="mi" data-ft="${t[0]}" aria-pressed="${S.ft===t[0]}">${t[1]}</button>`).join('')}</div>`+({dash:()=>vFinDash(P),overview:()=>P==='b'?vOverview():vPOver(P),tanggung:vTanggung,bill:vBill,breakdown:vBreak,commitment:()=>vCommitP(P),reserve:()=>vReserveP(P),debt:()=>vDebtP(P),cukai:vTax,yearly:vYearly}[S.ft]||vOverview)()}
   const th=wkid()?PTH[wme()]||'':(S.main==='home'&&S.person&&PTH[S.person])||'';document.body.dataset.th=th;
-  $('#app').innerHTML=h;if(th){const t=$('#app .tiles'),sd=$('#app .phero2 .pside');if(t&&sd)sd.appendChild(t)}const on=$('.menu [aria-pressed="true"]');if(on&&on.scrollIntoView)on.scrollIntoView({block:'nearest',inline:'center'})}
+  $('#app').innerHTML=h;if(th){const t=$('#app .tiles'),sd=$('#app .phero2 .pside');if(t&&sd)sd.appendChild(t)}if(window.layApply)layApply();const on=$('.menu [aria-pressed="true"]');if(on&&on.scrollIntoView)on.scrollIntoView({block:'nearest',inline:'center'})}
 
 /* Bills: one source, the BILL tab of the SPENDING sheet (shared with Planner Mira) */
 const BILL_SHEET='SPENDING',BILL_RANGE='BILL!A1:Z200',GS='Google Sheets';
