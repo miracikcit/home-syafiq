@@ -57,7 +57,8 @@ function doPost(e) {
 }
 
 /* Kod anak: hanya nampak keluarga, acara, tick Wellness dan mood; hanya boleh tulis tick Maliq / Musa. */
-function kidRead(p) { return /^(family|events)\//.test(p) || /^well\/(a-|p-|mood$)/.test(p); }
+/* Hero Points (28 Nov 2026): tablet boleh BACA well/pts-maliq / pts-musa (points, misi), tapi bukan pts-<anak>-plan (tarikh phone). Tulis tetap tak boleh. */
+function kidRead(p) { return /^(family|events)\//.test(p) || /^well\/(a-|p-|pts-(maliq|musa)$|mood$)/.test(p); }
 function kidWrite(p) { return /^well\/(a|p)-(maliq|musa)(-|$)/.test(p); }
 
 function app(b, admin, role) {

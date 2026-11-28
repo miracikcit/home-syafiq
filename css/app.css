@@ -558,3 +558,104 @@ body[data-th="musa"] .kwd.on{background:#F5A66B}
 .shl{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px}
 .shb{display:flex; align-items:center; justify-content:space-between; gap:6px; height:auto; min-height:44px; padding:8px 12px; border-radius:14px; text-decoration:none; white-space:normal; text-align:left; line-height:1.25; font-size:13px; box-shadow:none}
 .shb span{flex:none; opacity:.55}
+
+/* ===== Hero Points (28 Nov 2026), js/hero.js ===== */
+.hpb{background:#2F6BD8 radial-gradient(circle,rgba(255,255,255,.18) 1.5px,transparent 2px) 0 0/10px 10px; border:3px solid #1B1B1F; border-radius:18px; padding:12px 8px 4px; box-shadow:4px 4px 0 #1B1B1F; margin-bottom:12px; color:#fff}
+.hpb-top{display:flex; align-items:center; gap:10px; padding:0 6px 6px; flex-wrap:wrap}
+.hpb-l{font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase}
+.hpbig{font-family:"Bangers",Impact,sans-serif; font-size:48px; line-height:1; color:#FFD23F; -webkit-text-stroke:2px #1B1B1F; text-shadow:3px 3px 0 #1B1B1F; font-variant-numeric:tabular-nums}
+.hpnext{margin-left:auto; background:#FFD23F; color:#1B1B1F; border:2.5px solid #1B1B1F; border-radius:12px; padding:5px 10px; box-shadow:3px 3px 0 #1B1B1F; font-size:12px; font-weight:600; line-height:1.3; max-width:60%}
+.hpnext b{display:block; font-family:"Bangers",Impact,sans-serif; font-weight:400; font-size:18px; letter-spacing:.04em}
+.hpchg{margin:0; padding:0 6px 4px; font-size:12px; font-weight:600}
+.hproad{display:block; width:100%; max-width:420px; height:auto; margin:0 auto}
+.hproad .hpdim{filter:grayscale(1); opacity:.55}
+.hproad .hpdim2{filter:saturate(.8)}
+.hpw .hpwh{display:flex; gap:10px; align-items:center}
+.hpwf{width:64px; height:64px; flex:none}
+.hpwt{flex:1; min-width:0; display:flex; flex-direction:column; gap:6px}
+.hpwr{display:flex; justify-content:space-between; align-items:center; gap:8px}
+.hpbar{height:24px; border:2.5px solid #1B1B1F; border-radius:12px; background:#fff; overflow:hidden; position:relative}
+.hpbar i{display:block; height:100%; background:#E8443A repeating-linear-gradient(-45deg,transparent 0 8px,rgba(255,255,255,.25) 8px 16px)}
+.hpbar span{position:absolute; inset:0; display:grid; place-items:center; font-weight:700; font-size:12px; color:#1B1B1F}
+.hpwr2{display:flex; justify-content:space-between; gap:8px; align-items:center; margin:8px 0 4px; font-size:12px; font-weight:600}
+.hpstk{display:flex; gap:4px; align-items:center}
+.hpstk i{width:16px; height:16px; border:2px solid #1B1B1F; border-radius:50%; background:#fff; display:inline-block}
+.hpstk i.on{background:#FFD23F}
+.hpcuti{background:#DCE8FF; border:2px solid #1B1B1F; border-radius:8px; padding:0 6px}
+.hpok{margin:6px 0; font-weight:600; font-size:13px}
+.hpclaim{display:block; width:100%; margin:6px 0; border:2.5px solid #1B1B1F; background:#E8443A; color:#fff; font-family:"Bangers",Impact,sans-serif; font-size:20px; letter-spacing:.06em; border-radius:12px; padding:8px; box-shadow:3px 3px 0 #1B1B1F; cursor:pointer}
+.hpclaim.sm{display:inline-block; width:auto; margin:0; font-size:15px; padding:4px 10px}
+.hpfoods{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; margin:8px 0}
+.hpf{border:2.5px solid #1B1B1F; border-radius:12px; background:#fff; color:#1B1B1F; padding:4px; font-size:11px; font-weight:700; display:flex; flex-direction:column; align-items:center; gap:2px; cursor:pointer}
+.hpf svg{width:100%; max-width:56px; height:auto}
+.hpf[aria-pressed="true"]{background:#FFD23F; box-shadow:3px 3px 0 #1B1B1F}
+.hptasks{display:flex; flex-direction:column; gap:6px}
+.hpgrp{margin:6px 0 0; font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--mute)}
+.hpm{display:flex; gap:6px; align-items:stretch}
+.hpmb{flex:1; min-width:0; display:flex; align-items:center; gap:10px; border:2px solid #1B1B1F; border-radius:10px; padding:8px 10px; background:#fff; color:#1B1B1F; text-align:left; cursor:pointer; font:inherit}
+.hpmb:disabled{cursor:default}
+.hpck{width:24px; height:24px; flex:none; border:2.5px solid #1B1B1F; border-radius:7px; display:grid; place-items:center; font-weight:900; background:#fff}
+.hpnm{flex:1; min-width:0; font-weight:600; font-size:14px; overflow-wrap:anywhere}
+.hpnm small{display:block; font-size:11px; color:#4B4B55; font-weight:600}
+.hppv{font-family:"Bangers",Impact,sans-serif; font-size:18px; letter-spacing:.04em; color:#2F6BD8}
+.hpm.wait .hpmb{background:#FFF1C4} .hpm.wait .hpck{background:#FFD23F}
+.hpm.full .hpmb{background:#DDF5E5} .hpm.full .hpck{background:#3FB56B; color:#fff}
+.hpm.redeem .hpmb{border-style:dashed; background:#FFE0DA}
+.hpundo{border:2px solid #1B1B1F; border-radius:10px; background:#fff; color:#1B1B1F; font-size:18px; font-weight:900; width:42px; cursor:pointer}
+.hprw .hpcp{display:flex; align-items:center; gap:10px; padding:6px 0; border-top:1px solid var(--hair)}
+.hprw .hpcp:first-of-type{border-top:0}
+.hpcp svg{width:30px; height:30px; flex:none}
+.hpcp:not(.on) svg{filter:grayscale(1); opacity:.55}
+.hpcp.g .hpnm{font-weight:700}
+.hpleft{font-size:12px; color:var(--mute); font-weight:600; white-space:nowrap}
+.hpgot{font-size:12px; color:#1E7A45; font-weight:700; white-space:nowrap}
+.hpfeed{display:flex; flex-direction:column; gap:4px; font-size:13px}
+.hpfeed div{display:flex; gap:8px; align-items:baseline}
+.hpfeed b{font-family:"Bangers",Impact,sans-serif; font-weight:400; font-size:17px; min-width:38px; letter-spacing:.03em}
+.hpfeed b.p{color:#1E9A55} .hpfeed b.m{color:#E8443A}
+.hpfeed span{flex:1; min-width:0}
+.hpfeed small{color:var(--mute); white-space:nowrap}
+.hpmusa .hpms{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin-top:8px}
+.hpmusa .hpms div{border:2px dashed rgba(74,52,38,.3); border-radius:18px; padding:10px 6px; text-align:center; font-size:12px; font-weight:600; display:flex; flex-direction:column; align-items:center; gap:4px}
+.hpmusa .hpms span{width:40px; height:40px; border-radius:50%; display:grid; place-items:center; font-size:20px; color:#7D6656}
+.hppop{position:fixed; left:50%; top:42%; z-index:60; pointer-events:none; font-family:"Bangers",Impact,sans-serif; font-size:56px; letter-spacing:.04em; color:#FFD23F; -webkit-text-stroke:2.5px #1B1B1F; text-shadow:5px 5px 0 #1B1B1F; white-space:nowrap; opacity:0; transform:translate(-50%,-50%) rotate(-6deg) scale(.4); transition:transform .25s cubic-bezier(.3,1.6,.5,1),opacity .25s}
+.hppop.on{opacity:1; transform:translate(-50%,-50%) rotate(-6deg) scale(1)}
+.hppop.neg{color:#E8443A}
+@media (prefers-reduced-motion:reduce){.hppop{transition:none}}
+/* kad ibu bapa: ikut tema tab Mira / Syafiq */
+.hpgrid3{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin:6px 0}
+.hpgrid3 div{border:1px solid var(--hair); border-radius:12px; padding:8px; text-align:center}
+.hpgrid3 b{display:block; font-size:20px; font-weight:600; font-variant-numeric:tabular-nums}
+.hpgrid3 b small{font-size:12px; color:var(--mute); font-weight:400}
+.hpgrid3 span{font-size:11px; color:var(--mute)}
+.hpst{margin:6px 0; padding:8px 10px; border-radius:10px; font-size:13px}
+.hpst.ok{background:var(--ok-bg)} .hpst.warn{background:var(--warn-bg)}
+.hpdet{margin:6px 0}
+.hpdet summary{cursor:pointer; font-size:13px; font-weight:600; color:var(--ink); padding:4px 0}
+.hpdet .fl{margin-top:6px}
+.hprow2{display:flex; gap:8px; flex-wrap:wrap; margin-top:6px}
+.hpsub{margin:10px 0 0; font-size:12px; font-weight:600; color:var(--ink); text-transform:uppercase; letter-spacing:.1em}
+.mini.hpyes{background:var(--ok-bg)} .mini.hpno{background:var(--warn-bg)}
+.hpq{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px}
+.hpqb{display:flex; justify-content:space-between; gap:6px; align-items:center; border:1px solid var(--edge); border-radius:10px; padding:9px 10px; font:inherit; font-size:13px; color:var(--fg); text-align:left; cursor:pointer}
+.hpqb.hpplus{background:var(--ok-bg)} .hpqb.hpminus{background:var(--warn-bg)}
+.hpqb span{min-width:0; overflow-wrap:anywhere}
+.hpcus{display:flex; gap:6px; align-items:center; margin:8px 0 6px}
+.hpcus .hpnum{flex:none; width:58px}
+.hpneg{color:var(--warn)}
+.hpseg{display:flex; gap:6px; margin-bottom:6px}
+.hpseg .btn{flex:1}
+.hpform{display:flex; flex-direction:column; gap:8px; border-top:1px solid var(--hair); margin-top:8px; padding-top:10px}
+.hplv{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px}
+.hplv .btn{display:flex; flex-direction:column; align-items:flex-start; text-align:left; height:auto; padding:7px 8px; font-size:12.5px; line-height:1.25}
+.hplv .btn small{font-size:10.5px; opacity:.8; font-weight:400}
+.hpstep{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+.hpstep b{font-size:20px; min-width:36px; text-align:center}
+.hphint{font-size:12px; color:var(--mute)} .hphint.al{color:var(--warn); font-weight:600}
+.hpchk{display:flex; gap:8px; align-items:center; font-size:13px}
+.hprule{display:flex; flex-direction:column; gap:6px; padding:8px 0; border-top:1px solid var(--hair)}
+.hprule .nm{font-weight:600; font-size:13.5px}
+.hprule .nm small{display:block; color:var(--mute); font-weight:400; font-size:12px}
+.hpchips{display:flex; gap:6px; flex-wrap:wrap}
+.hpchips .btn{height:30px; padding:0 10px; font-size:12.5px}
+@media (max-width:420px){.hplv{grid-template-columns:1fr} .hpfoods{grid-template-columns:repeat(2,minmax(0,1fr))} .hpnext{max-width:100%; margin-left:0}}

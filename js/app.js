@@ -311,7 +311,7 @@ function vAdult(id){const w=id==='syafiq'?'s':'m',nm=pname(id),com=[];
   sec('commitment').forEach(([,d])=>(d.items||[]).forEach(i=>{if(i.w===w)com.push(Object.assign({g:d.title},i))}));
   const ct=sum(com.map(i=>i.a)),ym=YM(),bi=((BILLS()||{items:[]}).items||[]).filter(i=>i.w===w),un=bi.filter(i=>i.a&&!(i.paid&&i.paid[ym]));
   const dv=sum(its('debt-'+id).map(dBal))+sum(its('ans-'+id).map(i=>ansCalc(i).bal||0));
-  let h=heroCard(id)+`<div class="tiles"><div class="card tile"><b>${n2(ct).split('.')[0]}</b><small>RM ${esc(nm)} bayar sebulan</small></div><div class="card tile"><b>${un.length}</b><small>bill belum bayar ${MN[S.month]}</small></div><div class="card tile"><b>${n2(dv).split('.')[0]}</b><small>RM hutang</small></div></div>`+(id==='mira'&&wme()==='mira'?sheetsCard():'')+(id==='syafiq'?kDadWallet()+vWork():'')+chToday(id)+personEvCard(id);
+  let h=heroCard(id)+`<div class="tiles"><div class="card tile"><b>${n2(ct).split('.')[0]}</b><small>RM ${esc(nm)} bayar sebulan</small></div><div class="card tile"><b>${un.length}</b><small>bill belum bayar ${MN[S.month]}</small></div><div class="card tile"><b>${n2(dv).split('.')[0]}</b><small>RM hutang</small></div></div>`+(id==='mira'&&wme()==='mira'?sheetsCard():'')+(id===wme()?hpParent():'')+(id==='syafiq'?kDadWallet()+vWork():'')+chToday(id)+personEvCard(id);
   h+=`<div class="card"><div class="head"><h2>Komitmen ${esc(nm)}</h2><div class="hr"><span class="tot">${rm(ct)}</span><button class="sedit" data-goto="finance|commitment">Edit</button></div></div>`+
    (com.length?com.map(i=>`<div class="row"><span class="nm">${esc(i.n)}<small>${esc(i.g)}</small></span><span class="amt ${pc(w)}">${i.a==null?'—':rm(i.a)}</span></div>`).join(''):'<p class="note">Tiada komitmen.</p>')+`</div>`;
   h+=`<div class="card"><div class="head"><h2>Bill ${MN[S.month]}</h2><button class="sedit" data-goto="finance|bill">Edit</button></div>`+
@@ -328,10 +328,10 @@ function vProfile(){let h=`<button class="back" data-person="">‹ Home</button>
   return h+`<p class="note">Gambar dan salinan IC disimpan dalam app ni sahaja. Sesiapa yang kau share app ni boleh tengok.</p>`}
 function vPerson(){const id=S.person;if(id==='profile')return vProfile();const P=PPL.find(x=>x[0]===id);if(!P){S.person=null;return vHome()}
   const back=`<button class="back" data-person="">‹ Home</button>`+(S.evf?evForm():'');
-  if(wkid())return back+(S.ready?heroCard(id)+kTiles(id)+(wme()===id?kidToday(id)+vKSek(id).replace(/<div class="card kbag">[\s\S]*$/,''):'')+wellWeek(id):wait());
+  if(wkid())return back+(S.ready?heroCard(id)+(wme()===id?hpKid(id):'')+kTiles(id)+(wme()===id?kidToday(id)+vKSek(id).replace(/<div class="card kbag">[\s\S]*$/,''):'')+wellWeek(id):wait());
   if(!S.ready)return back+wait();
   if(P[2]==='adult')return back+vAdult(id)+wellWeek(id);
-  return back+`<div class="menu glass">${KT.map(t=>`<button class="mi" data-ptab="${t[0]}" aria-pressed="${S.ptab===t[0]}">${t[1]}</button>`).join('')}</div>`+({ring:kRing,sekolah:vKSek,wallet:vKWallet,belanja:vKExp,butiran:kBut,umur:kUmur,aktiviti:kAkt,info:kInfo}[S.ptab]||kRing)(id)+(S.ptab==='ring'?wellWeek(id):'')}
+  return back+`<div class="menu glass">${KT.map(t=>`<button class="mi" data-ptab="${t[0]}" aria-pressed="${S.ptab===t[0]}">${t[1]}</button>`).join('')}</div>`+(S.ptab==='ring'?hpKid(id):'')+({ring:kRing,sekolah:vKSek,wallet:vKWallet,belanja:vKExp,butiran:kBut,umur:kUmur,aktiviti:kAkt,info:kInfo}[S.ptab]||kRing)(id)+(S.ptab==='ring'?wellWeek(id):'')}
 
 /* Uploads (gambar profil dan salinan IC) and downloads */
 const fileIn=document.createElement('input');fileIn.type='file';fileIn.hidden=true;document.body.appendChild(fileIn);
@@ -1085,6 +1085,7 @@ function val(id){const e=document.getElementById(id);if(!e)return'';const v=e.va
 document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
   if(b.id==='editBtn'){S.edit=!S.edit;return render(true)}
   if(wkid()&&d.person!==undefined&&d.person!==''&&d.person!==wme())return toast('Tab ni untuk '+(d.person==='profile'?'mak ayah':pname(d.person))+' sahaja.');
+  if(hpClick(b,d))return;
   if(moreClick(b,d))return;
   if(famClick(b,d))return;
   if(taxClick(b,d))return;
